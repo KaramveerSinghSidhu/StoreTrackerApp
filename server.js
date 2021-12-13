@@ -120,7 +120,7 @@ app.get('/home', isAuthUser, async (req, res) => {
         var year = date.year
         var day = date.day.toString()
         var month = date.month.toString()
-        let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+        let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
         var strDate = getInputDate(day, month, year)
         let users = await findOtherUsers(req.user.name)
         let myweek = await findMyWeek(week, year, req.user.name)
@@ -136,7 +136,7 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         var year = DateTime.local().setZone('America/Denver').year
         var day = DateTime.local().setZone('America/Denver').day.toString()
         var month = DateTime.local().setZone('America/Denver').month.toString()
-        let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+        let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
         var strDate = getInputDate(day, month, year)
         genWeeklySales(year, week)
         let users = await findOtherUsers(req.user.name)
@@ -153,7 +153,7 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
 })
 
 app.get('/sales', isAuthUser, async (req, res) => {
-    let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
     let year = DateTime.local().setZone('America/Denver').year
 
     let mysales = await findMySales(week, year, req.user.name)
@@ -167,7 +167,7 @@ app.get('/sales', isAuthUser, async (req, res) => {
 })
 
 app.get('/store', isAuthUser, async (req, res) => {
-    let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
     let year = DateTime.local().setZone('America/Denver').year
     var month = DateTime.local().setZone('America/Denver').month
     
@@ -198,7 +198,7 @@ app.get('/store/:year/:week', isAuthUser, async (req, res) => {
 })
 
 app.get('/store/manage', isAuthandMgrUser, async (req, res) => {
-    let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
     var month = DateTime.local().setZone('America/Denver').month
     let year = DateTime.local().setZone('America/Denver').year
 
@@ -230,7 +230,7 @@ app.get('/store/manage', isAuthandMgrUser, async (req, res) => {
 })
 
 app.get('/logs', isAuthUser, async (req, res) => {
-    let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
     let year = DateTime.local().setZone('America/Denver').year
 
     let mysales = await DailySales.find({}).sort({date: -1})
@@ -239,7 +239,7 @@ app.get('/logs', isAuthUser, async (req, res) => {
 })
 
 app.get('/logs/log', isAuthUser, async (req, res) => {
-    let week = DateTime.local().plus({day: 1}).weekNumber
+    let week = DateTime.local().plus({day: 2}).weekNumber
     let year = DateTime.local().year
 
         var year1 = DateTime.now().year
@@ -261,7 +261,7 @@ app.get('/returns', isAuthUser, async (req, res) => {
     var year = date.year
     var day = date.day.toString()
     var month = date.month.toString()
-    let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
     var strDate = getInputDate(day, month, year)
 
     let users = await User.find({
@@ -293,7 +293,7 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
     var day = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.local(year, month, day).setZone('America/Denver')
-    var week = dateOfDay.plus({day: 1}).weekNumber
+    var week = dateOfDay.plus({day: 2}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
     
@@ -383,7 +383,7 @@ app.post('/return/sale', isAuthUser, async (req, res) => {
     var day = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.local(year, month, day).setZone('America/Denver')
-    var week = dateOfDay.plus({day: 1}).weekNumber
+    var week = dateOfDay.plus({day: 2}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
     if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mc > 0 || a.acc > 0 || a.bpo > 0){
@@ -515,7 +515,7 @@ app.post('/update/weekly/targets', isAuthandMgrUser, async (req, res) => {
     var year = date.year
     var day = date.day.toString()
     var month = date.month.toString()
-    let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
 
     var a = req.body
 
@@ -537,7 +537,7 @@ app.post('/update/monthly/bpo', isAuthandMgrUser, async (req, res) => {
     var year = date.year
     var day = date.day.toString()
     var month = date.month.toString()
-    let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
 
     var a = req.body
 
@@ -556,7 +556,7 @@ app.post('/update/weekly/users', isAuthandMgrUser, async (req, res) => {
     var year = date.year
     var day = date.day.toString()
     var month = date.month.toString()
-    let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.local().setZone('America/Denver').plus({day: 2}).weekNumber
 
     var a = req.body
    
@@ -916,7 +916,7 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     var dayy = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.local(year, month, dayy).setZone('America/Denver')
-    var week = dateOfDay.plus({day: 1}).weekNumber
+    var week = dateOfDay.plus({day: 2}).weekNumber
 
     if(isNaN(parseInt(myweek.termSubs))){
         myweek.termSubs = 0
@@ -1076,7 +1076,7 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.local(year, month, dayy).setZone('America/Denver')
     var day = dateOfDay.plus({day: 1}).weekdayLong
-    var week = dateOfDay.plus({day: 1}).weekNumber
+    var week = dateOfDay.plus({day: 2}).weekNumber
 
     //fetching old post info
     if(mysales.nac == null){nac = 0}else{nac = mysales.nac}
