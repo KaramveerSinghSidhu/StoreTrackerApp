@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>StoreTracker | 5501</title>
+</head>
+<body class="bg-warning">
+    <div>
+    <div class="row">
+        <h1 class="col m-5">Store 5501</h1>
+        <div class="p-5 col text-end">
+            <div class="row">
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <h5 class="col pt-2"><%= username.name%></h5>
+                <a class="col btn btn-dark" href="/logout">Sign out</a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <nav>
+            <ul class="row bg-dark">
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/home">New Sale</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/sales">Rep Sales</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/store">Store Sales</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/returns">Returns</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/logs">Logs</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<div class="container pt-5 mt-5 pb-5 mb-5">
+    <div class="card mb-3 d-grid">
+        <h3 class="text-center m-5">Welcome back <%= username.name %>!</h3>
+        <div>
+            <div class="row ps-3 pt-3 pe-3 pb-1 text-center">
+                <h4 class="col">Weekly Subs</h4>
+                <h4 class="col">Back Pocket Offer</h4>
+            </div>
+            <div class="row ps-3 pb-3 pe-3 text-center pb-5 mb-5">
+                <h5 class="col"><%= myweek.totalSubs %></h5>
+                <h5 class="col">$<%= mystore.storeBPO %></h5>
+            </div>
+        </div>
+    </div>
+    <div class="row m-5  pt-5 bg-light">
+        <form class="new-form" action="/add/sale" method="POST">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col text-center"><h3>Date</h3></div>
+            <div class="col"></div>
+            <div class="col text-center"><h3>Add Sale</h3></div>
+            <div class="col"></div>
+            <div class="col text-center"><h3>Color</h3></div>
+            <div class="col"></div>
+        </div>
+        <div class="row pt-5">
+            <div class="col"></div>
+            <div class="col text-center"><label class="col new-form m-1 text-end" for="rep">Sales Rep</label></div>
+            <div class="col"></div>
+        </div>
+            <div class="row pb-5">
+                <div class="col"></div>
+                <div class="col"><input type=date id="saleDate" name="saleDate" value="<%= date %>"></div>
+                <div class="col"></div>
+                <select class="col new-form" name="rep" id="rep" type=string>
+                    <option value="<%= username.name %>"><%= username.name %></option>
+                    <% users.forEach(user => { %>
+                        <% if(user.name != undefined) { %>
+                    <option value="<%= user.name %>"><%= user.name %></option>
+                    <% }}) %>
+                </select>
+                <div class="col"></div>
+                <div class="col text-center">
+                    <h5 class="col">
+                    <% if(myweek.weeklyAchieved == "Green") { %>
+                            <a class="btn btn-success btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
+                        <% }else if(myweek.weeklyAchieved == "Yellow"){ %>
+                            <a class="btn btn-warning btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
+                        <% }else{ %>
+                            <a class="btn btn-danger btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
+                        <% } %>
+                    </h5></div>
+                <div class="col"></div>
+            </div>
+            <div class="row"></div>
+            <div class="row ps-3 pt-3 pe-3 pb-1 text-center">
+                <label class="col new-form m-1" for="byodnac">NAC</label>
+                <label class="col new-form m-1" for="termnac">T-NAC</label>
+                <label class="col new-form m-1" for="byodmbb">MBB</label>
+                <label class="col new-form m-1" for="termmbb">T-MBB</label>
+                <label class="col new-form m-1" for="hup">HUP</label>
+                <label class="col new-form m-1" for="fdp">FDP</label>
+                <label class="col new-form m-1" for="mc">MC</label>
+                <label class="col new-form m-1" for="acc">ACC</label>
+                <label class="col new-form m-1" for="bpo">BPO</label>
+            </div>
+            <div class="row ps-3 pb-3 pe-3 text-center pb-5 mb-5">
+                <input class="col new-form m-1" type="number" id="byodnac" name="byodnac">
+                <input class="col new-form m-1" type="number" id="termnac" name="termnac">
+                <input class="col new-form m-1" type="number" id="byodmbb" name="byodmbb">
+                <input class="col new-form m-1" type="number" id="termmbb" name="termmbb">
+                <input class="col new-form m-1" type="number" id="hup" name="hup">
+                <input class="col new-form m-1" type="number" id="fdp" name="fdp">
+                <select class="col new-form m-1" name="mcApp" id="mcApp" type=number>
+                    <option value="0">N/A</option>
+                    <option value="2">Approved</option>
+                    <option value="1">Review</option>
+                </select>
+                <input class="col new-form m-1" type="number" id="acc" name="acc">
+                <input class="col new-form m-1" type="number" id="bpo" name="bpo">
+            </div>
+            <div class="row ps-3 pb-3 pe-3 text-center pb-5 mb-5">
+                <div class="col"></div>
+                <div class="col"></div>
+                <button class="col btn-warning btn" type='submit'>Add Sale</button>
+                <div class="col"></div>
+                <div class="col"></div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

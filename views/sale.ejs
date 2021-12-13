@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>StoreTracker | 5501</title>
+</head>
+<body class="bg-warning">
+    <div>
+    <div class="row">
+        <h1 class="col m-5">Store 5501</h1>
+        <div class="p-5 col text-end">
+            <div class="row">
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <h6 class="col pt-2"><%= username.name %></h6>
+                <a class="col btn btn-dark" href="/logout">Sign out</a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <nav>
+            <ul class="row bg-dark">
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/home">New Sale</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/sales">Rep Sales</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/store">Store Sales</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/returns">Returns</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/logs">Logs</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<div class="container bg-light pb-5">
+    <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary mt-5">
+        <h6 class="col">Date</h6>
+        <h6 class="col">Day</h6>
+        <h6 class="col">Total Subs</h6>
+        <h6 class="col">Accessories</h6>
+        <h6 class="col">Term Subs</h6>
+        <h6 class="col">FDP</h6>
+        <h6 class="col">ARS</h6>
+        <h6 class="col">FDP%</h6>
+    </div>
+    <div class="bg-light mt-5 mb-5">
+        <div>
+            <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-light">
+                <h6 class="col"><%= sale.date %></h6>
+                <h6 class="col"><%= sale.day %></h6>
+                <h6 class="col"><%= sale.totalSubs %></h6>
+                <h6 class="col">$<%= sale.acc %></h6>
+                <h6 class="col"><%= sale.termSubs %></h6>
+                <h6 class="col"><%= sale.fdp %></h6>
+                <h6 class="col">$<%= sale.ars %></h6>
+                <h6 class="col"><%= sale.fdpAttach %>%</h6>
+            </div>
+        </div>
+    </div>
+    <div class="row ps-3 pt-3 pe-3 pb-2 text-center bg-secondary">
+        <h6 class="col m-1" for="byodnac">NAC</h6>
+        <h6 class="col m-1" for="termnac">T-NAC</h6>
+        <h6 class="col m-1" for="byodmbb">MBB</h6>
+        <h6 class="col m-1" for="termmbb">T-MBB</h6>
+        <h6 class="col m-1" for="hup">HUP</h6>
+        <h6 class="col m-1" for="fdp">FDP</h6>
+        <h6 class="col m-1" for="mc">MCR</h6>
+        <h6 class="col m-1" for="mc">MCA</h6>
+        <h6 class="col m-1" for="acc">ACC</h6>
+        <h6 class="col m-1" for="bpo">BPO</h6>
+        <% if (sale.user == username.name) { %>
+        <h6 class="col m-1" for="bpo">Commission</h6>
+        <% } %>
+    </div>
+    <div class="row ps-3 pt-3 pe-3 pb-1 text-center">
+        <label class="col m-1" for="byodnac"><%= sale.nac %></label>
+        <label class="col m-1" for="termnac"><%= sale.termNac %></label>
+        <label class="col m-1" for="byodmbb"><%= sale.mbb %></label>
+        <label class="col m-1" for="termmbb"><%= sale.termMbb %></label>
+        <label class="col m-1" for="hup"><%= sale.hup %></label>
+        <label class="col m-1" for="fdp"><%= sale.fdp %></label>
+        <label class="col m-1" for="mc"><%= sale.mcReview %></label>
+        <label class="col m-1" for="mc"><%= sale.mcApproved %></label>
+        <label class="col m-1" for="acc">$<%= sale.acc %></label>
+        <label class="col m-1" for="bpo">$<%= sale.bpo %></label>
+        <% if (sale.user == username.name) { %>
+            <label class="col m-1" for="bpo">$<%= sale.userCommission %></label>
+            <% } %>
+    </div>
+    <% if(username.name == "Karamveer") { %>
+    <div class="row mt-5">
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <a class="btn-danger btn col mt-5" href="/sale/delete/<%= sale.id %>">Delete</a>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"></div>
+    </div>
+    <% } %>
+</div>
+</body>
+</html>
