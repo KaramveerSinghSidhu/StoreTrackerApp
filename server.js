@@ -1075,7 +1075,7 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     var dayy = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.local(year, month, dayy).setZone('America/Denver')
-    var day = dateOfDay.minus({day: 1}).weekdayLong
+    var day = dateOfDay.plus({day: 1}).weekdayLong
     var week = dateOfDay.plus({day: 1}).weekNumber
 
     //fetching old post info
