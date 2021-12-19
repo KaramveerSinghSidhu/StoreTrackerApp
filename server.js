@@ -125,6 +125,7 @@ app.get('/home', isAuthUser, async (req, res) => {
         let users = await findOtherUsers(req.user.name)
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
+        console.log(week)
 
 
 
@@ -142,6 +143,8 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         let users = await findOtherUsers(req.user.name)
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
+
+        console.log(week)
 
         
 
@@ -263,6 +266,7 @@ app.get('/returns', isAuthUser, async (req, res) => {
     var month = date.month.toString()
     let week = DateTime.local().setZone('America/Denver').plus({day: 1}).weekNumber
     var strDate = getInputDate(day, month, year)
+    console.log(week)
 
     let users = await User.find({
         name: {
