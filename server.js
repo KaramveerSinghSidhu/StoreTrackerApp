@@ -297,7 +297,7 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
     var day = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.local(year, month, day).setZone('America/Denver')
-    var week = dateOfDay.setZone('America/Denver').plus({day: 1}).weekNumber
+    var week = dateOfDay.setZone('America/Denver').plus({day: 2}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
     
@@ -387,7 +387,7 @@ app.post('/return/sale', isAuthUser, async (req, res) => {
     var day = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.local(year, month, day).setZone('America/Denver')
-    var week = dateOfDay.plus({day: 1}).weekNumber
+    var week = dateOfDay.setZone('America/Denver').plus({day: 1}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
     if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mc > 0 || a.acc > 0 || a.bpo > 0){
