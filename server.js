@@ -300,6 +300,8 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
     var week = dateOfDay.setZone('America/Denver').plus({day: 1}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
+    week++
+
     
     
 
