@@ -297,7 +297,7 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
     var day = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.local(year, month, day).setZone('America/Denver')
-    var week = dateOfDay.setZone('America/Denver').plus({day: 1}).weekNumber
+    var week = dateOfDay.plus({day: 1}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
     week++
