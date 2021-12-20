@@ -369,6 +369,7 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
             timeanddate: dateOfDay
         })
 
+
         addSale(a, user, myweek, mystore, mysales, weeklyStore, logSale)
         
     }   
@@ -1082,8 +1083,8 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     var dayy = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.now(year, month, dayy).setZone('America/Denver')
-    var day = dateOfDay.plus({day: 1}).weekdayLong
-    var week = dateOfDay.plus({day: 1}).weekNumber
+    var day = dateOfDay.weekdayLong
+    var week = dateOfDay.weekNumber
 
     //fetching old post info
     if(mysales.nac == null){nac = 0}else{nac = mysales.nac}
