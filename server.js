@@ -125,7 +125,6 @@ app.get('/home', isAuthUser, async (req, res) => {
         let users = await findOtherUsers(req.user.name)
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
-        console.log(week)
 
 
 
@@ -266,7 +265,6 @@ app.get('/returns', isAuthUser, async (req, res) => {
     var month = date.month.toString()
     let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
     var strDate = getInputDate(day, month, year)
-    console.log(week)
 
     let users = await User.find({
         name: {
@@ -300,13 +298,10 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
     var week = dateOfDay.plus({day: 1}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
-    console.log(week)
-    console.log(daystr)
-
     
     
 
-    if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mcApp > 0 || a.acc > 0 || a.bpo > 0 ){
+    if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mcApp > 0 || a.acc > 0 || a.bpo > 0 || a.express > 0){
         mysales = await DailySales.findOne({
             date: a.saleDate, 
             user: req.body.rep
@@ -338,6 +333,7 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
                 mbb : 0,
                 termMbb : 0,
                 hup : 0,
+                express:0,
                 fdp : 0,
                 acc : 0,
                 bpo : 0,
@@ -394,7 +390,7 @@ app.post('/return/sale', isAuthUser, async (req, res) => {
     var week = dateOfDay.setZone('America/Denver').plus({day: 1}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
-    if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mc > 0 || a.acc > 0 || a.bpo > 0){
+    if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mc > 0 || a.acc > 0 || a.bpo > 0 || a.express > 0){
         
         let mysales = await DailySales.findOne({
             date: a.saleDate, 
@@ -796,12 +792,18 @@ async function addSale(a, user, myweek, store, mysales, weeklyStore, logSale){
 
     var stringValue = "add"
     //var bpoLeft = store.storeBPO
-    
+
+    if(!isNaN(parseInt(a.express))){
+        var iexpress = parseInt(a.express)
+    }else{
+        var iexpress = 0
+    }
     if(!isNaN(parseInt(a.byodnac))){
         var inac = parseInt(a.byodnac)
     }else{
         var inac = 0
     }
+    console.log(inac)
     if(!isNaN(parseInt(a.termnac))){
         var itnac = parseInt(a.termnac)
     }else{
@@ -855,14 +857,19 @@ async function addSale(a, user, myweek, store, mysales, weeklyStore, logSale){
             var imcApproved = 0
         }
     }
-    updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore)
+    updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress)
     
-    userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale)
+    userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
 }
 async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale){
 
     var stringValue = "return"
 
+    if(!isNaN(parseInt(a.express))){
+        var iexpress = parseInt(a.express)
+    }else{
+        var iexpress = 0
+    }
     if(!isNaN(parseInt(a.byodnac))){
         var inac = parseInt(a.byodnac)
     }else{
@@ -909,9 +916,9 @@ async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale)
         var imcReview = 0
         var imcApproved = 0
 
-    updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore)
+    updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress)
 
-    userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale)
+    userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
     
 
 }
@@ -1073,10 +1080,10 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     
 }
 
-async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore){
+async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress){
 
     //declaring vars
-    var nac, tnac, mbb, tmbb, hup, fdp, acc, bpo, mc, mcApproved, mcReview, mcValue
+    var nac, tnac, mbb, tmbb, hup, fdp, acc, bpo, mc, mcApproved, mcReview, mcValue, express
     var date = a.saleDate
     var strofDate = date.split('-')
     var year = parseInt(strofDate[0])
@@ -1098,6 +1105,7 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     if(mysales.mc == null){mc = 0}else{mc = mysales.mc}
     if(mysales.mcApproved == null){mcApproved = 0}else{mcApproved = mysales.mcApproved}
     if(mysales.mcReview == null){mcReview = 0}else{mcReview = mysales.mcReview}
+    if(mysales.express == null){express = 0}else{express = mysales.express}
 
     //adding new input + old input
     if(stringValue == "add"){
@@ -1113,6 +1121,7 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
         mcApproved += imcApproved
         mcReview += imcReview
         mcValue = imcValue
+        express += iexpress
     }else if (stringValue == "return"){
         nac = nac - inac
         tnac = tnac - itnac
@@ -1126,6 +1135,7 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
         mcApproved = imcApproved
         mcReview = imcReview
         mcValue = imcValue
+        express = express - iexpress
     }
 
     if(isNaN(imc)){
@@ -1133,14 +1143,14 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     }
 
 
-    var itotalSubs = (inac + itnac + imbb + itmbb + ihup + imc)
+    var itotalSubs = (inac + itnac + imbb + itmbb + ihup + imc + iexpress)
     var itermSubs = ( itnac + itmbb + ihup)
     var iars = (iacc / itotalSubs).toFixed(2)
     var ifdpAttach = ((ifdp / itermSubs).toFixed(2) * 100)
 
     
 
-    var totalSubs = (nac + tnac + mbb + tmbb + hup + mc)
+    var totalSubs = (nac + tnac + mbb + tmbb + hup + mc + express)
     var termSubs = (tnac + tmbb + hup)
     var ars = (acc / totalSubs).toFixed(2)
     var fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
@@ -1184,6 +1194,7 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     dailySales.termSubs = termSubs
     dailySales.ars = ars
     dailySales.fdpAttach = fdpAttach
+    dailySales.express = express
 
     //saving doc and deleting old one
     dailySales = await dailySales.save()
@@ -1348,7 +1359,7 @@ async function updateWeeklyUsersMngr(a, week, year, weeklySales){
     }
 }
 
-async function userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale){
+async function userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress){
 
     if(stringValue == "add"){
         logSale.action = "Added Sale"
@@ -1356,6 +1367,9 @@ async function userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, 
         logSale.action = "Returned Sale"
     }
 
+    if(iexpress > 0){
+        logSale.express = iexpress
+    }
     if(inac > 0){
         logSale.nac = inac
     }

@@ -11,6 +11,7 @@ const dailySalesSchema = new mongoose.Schema({
         mbb:Number,
         termMbb:Number,
         hup:Number,
+        express:Number,
         fdp:Number,
         mc:Number,
         acc:Number,
