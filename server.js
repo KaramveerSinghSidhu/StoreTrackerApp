@@ -143,8 +143,6 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
 
-        console.log(week)
-
         
 
         res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek})
@@ -803,7 +801,6 @@ async function addSale(a, user, myweek, store, mysales, weeklyStore, logSale){
     }else{
         var inac = 0
     }
-    console.log(inac)
     if(!isNaN(parseInt(a.termnac))){
         var itnac = parseInt(a.termnac)
     }else{
