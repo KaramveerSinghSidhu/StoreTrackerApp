@@ -8,7 +8,12 @@
 
     <title>StoreTracker | 5501</title>
 </head>
-<body class="bg-warning">
+<style>
+    body{
+        background: rgba(250, 220, 0, 1);
+    }
+</style>
+<body class="">
     <div>
     <div class="row">
         <h1 class="col m-5">Store 5501</h1>
@@ -30,15 +35,16 @@
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/sales">Rep Sales</a></li>
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/store">Store Sales</a></li>
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/returns">Returns</a></li>
-                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/logs">Logs</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/promos">Promos</a></li>
             </ul>
         </nav>
     </div>
 </div>
 <div class="container">
     <h3 class="col m-5 text-center">Store Weekly Sales</h3>
+
     <div class="container row mt-4 mb-4 bg-dark p-2 ms-1">
-        <div class="col ms-4"><button class="btn-secondary btn">Last Week</button></div>
+        <div class="col ms-4"><a class="btn-secondary btn" href="/store/<%= year %>/<%=week - 1%>">Last Week</a></div>
         <div class="col"></div>
         <div class="col"></div>
         <div class="col"></div>
@@ -48,7 +54,11 @@
         <div class="col"></div>
         <div class="col"></div>
         <div class="col"></div>
-        <div class="col"><button class="btn-secondary me-2 btn">Next Week</button></div>
+        <% if (week + 1 > weekNow){ %>
+        <div class="col"><a class="btn-secondary me-2 btn" href="/store/<%= year %>/<%=week%>">Next Week</a></div>
+        <% } else { %>
+            <div class="col"><a class="btn-secondary me-2 btn" href="/store/<%= year %>/<%=week + 1%>">Next Week</a></div>
+            <%}%>
     </div>
     <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary">
         <h6 class="col">Week: <%=week%></h6>
@@ -88,7 +98,7 @@
                     <% if(sale.weeklyAchieved == "Green") { %>
                             <a class="btn btn-success btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% }else if(sale.weeklyAchieved == "Yellow"){ %>
-                            <a class="btn btn-warning btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
+                            <a class="btn btn-dark btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% }else{ %>
                             <a class="btn btn-danger btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% } %>
@@ -120,7 +130,7 @@
             <% if(storeWeekly.weeklyAchieved == "Green") { %>
                 <a class="btn btn-success btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                 <% }else if(storeWeekly.weeklyAchieved == "Yellow"){ %>
-                <a class="btn btn-warning btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
+                <a class="btn btn-dark btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                 <% }else{ %>
                 <a class="btn btn-danger btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                 <% } %>

@@ -9,6 +9,7 @@ const User = require('./models/user')
 const DailySales = require('./models/dailySales')
 const WeeklySales = require('./models/weeklySales')
 const Store = require('./models/store')
+const Promo = require("./models/promo")
 const passport= require('passport')
 const session = require('express-session')
 const flash = require('express-flash')
@@ -84,6 +85,7 @@ passport.use(new LocalStrategy(function (username, password, done) {
 app.get('/register', isAuthandMgrUser, (req, res) => {
     res.render('register.ejs')
 })
+
 app.post('/register', isAuthandMgrUser, async (req, res) => {
     const SafePass = await bcrypt.hash(req.body.password, 10)
 
@@ -108,12 +110,12 @@ app.get('/', isnotAuthUser, (req, res) => {
 app.get('/login', isnotAuthUser, (req, res) => {
     res.render('login.ejs')
 })
+
 app.post('/login', passport.authenticate('local', {
     successRedirect: '/5501/home',
     failureRedirect: '/login',
     failureFlash: true
 }))
-
 
 app.get('/home', isAuthUser, async (req, res) => {
         var date = DateTime.now().setZone('America/Denver')
@@ -131,6 +133,23 @@ app.get('/home', isAuthUser, async (req, res) => {
         res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek})
 })
 
+app.get('/promos', isAuthUser, async (req, res) => {
+    var date = DateTime.now().setZone('America/Denver')
+    var year = date.year
+    var day = date.day.toString()
+    var month = date.month.toString()
+    let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
+    var strDate = getInputDate(day, month, year)
+    let users = await findOtherUsers(req.user.name)
+
+    let activePromos = await getActivePromos()
+    let retiredPromos = await getRetiredPromos()
+
+
+
+    res.render('promos.ejs', {users: users, username: req.user, date: strDate, activePromos: activePromos, retiredPromos: retiredPromos})
+})
+
 app.get('/5501/home', isAuthUser, async (req, res) => {
     try{
         var year = DateTime.now().setZone('America/Denver').year
@@ -142,6 +161,17 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         let users = await findOtherUsers(req.user.name)
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
+
+        let promo = new Promo({
+            Title: "$120 Accessory Promotion - $5/mo 24 months",
+            StartDate: "13 Dec 2021",
+            EndDate: "Ongoing",
+            PromoFor: "NAC & HUP",
+            PromoTerm: "TERM & BYOP",
+            PromoSocCode: "TAGSRA155",
+            isActive: false
+        })
+        //promo = await promo.save()
 
         
 
@@ -178,23 +208,26 @@ app.get('/store', isAuthUser, async (req, res) => {
 
     let storeWeekly = await findStoreWeek(week, year, month)
     let thisWeek = await findWeeklySales(week, year)
+    let weekNow = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
 
     
 
-    res.render('storesales.ejs', {username: req.user, thisWeek: thisWeek, week: week, storeWeekly: storeWeekly, weeklySales: weeklySales})
+    res.render('storesales.ejs', {username: req.user, thisWeek: thisWeek, week: week, storeWeekly: storeWeekly, weeklySales: weeklySales, year: year, weekNow: weekNow})
 })
 
 app.get('/store/:year/:week', isAuthUser, async (req, res) => {
     let week = req.params.week
     let year = req.params.year
-    
+    let weekNow = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
     genWeeklySales(year, week)
 
     let storeWeekly = await findStoreWeek(week, year, user)
     let thisWeek = await findWeeklySales(week, year)
+
+    week = parseInt(week)
     
 
-    res.render('storesales.ejs', {username: req.user, thisWeek: thisWeek, week: week, storeWeekly: storeWeekly})
+    res.render('storesales.ejs', {username: req.user, thisWeek: thisWeek, week: week, storeWeekly: storeWeekly, year: year, weekNow: weekNow})
 })
 
 app.get('/store/manage', isAuthandMgrUser, async (req, res) => {
@@ -444,6 +477,13 @@ var sale = await DailySales.findById({_id: req.params.id})
 res.render('sale.ejs', {username: req.user, sale: sale})
 })
 
+app.get('/promotion/:id', async (req, res) => {
+
+    var promo = await Promo.findById({_id: req.params.id})
+    
+    res.render('promo.ejs', {username: req.user, sale: sale})
+})
+
 app.get('/weekly/:username/:year/:week', isAuthUser, async (req, res) => {
 
     let users = await User.find({})
@@ -584,6 +624,22 @@ app.get('/logout', (req, res) => {
 })
 
 //functions
+async function getActivePromos(){
+    let promos = await Promo.find({
+        isActive: true
+    })
+    return promos
+}
+
+async function getRetiredPromos(){
+    let promos = await Promo.find({
+        isActive:{
+            $ne: true
+        }
+    })
+    return promos
+}
+
 async function genWeeklySales(year, week){
     let users = await User.find({})
 
@@ -625,6 +681,7 @@ async function findOtherUsers(user){
     })
     return users
 }
+
 function getInputDate(day, month, year){
     for(i = 0; i < 10; i++){
         if(day == i){
@@ -676,6 +733,7 @@ async function findMyWeek(week, year, user){
 
     return myweek
 }
+
 async function findWeeklySales(week, year){
 
     let thisWeek = await WeeklySales.find({
@@ -685,6 +743,7 @@ async function findWeeklySales(week, year){
 
     return thisWeek
 }
+
 async function findStoreWeek(week, year, month){
 
     let weeklyStore = await WeeklyStore.findOne({
@@ -701,8 +760,8 @@ async function findStoreWeek(week, year, month){
 
     //const dateFromStr = dt.startOf('week').minus({day: 1});
     const dateToStr = dt.endOf('week').minus({day: 1})
+    try{
     var eow = dateToStr.toISO().slice(0,10)
-
     var strofDate = eow.split('-')
     var year = parseInt(strofDate[0])
     var day = parseInt(strofDate[2])
@@ -728,9 +787,14 @@ async function findStoreWeek(week, year, month){
         })
         weeklyStore = await weeklyStore.save()
     }
+    }catch{}
+    
+
+    
 
     return weeklyStore
 }
+
 async function findStoreMonthly(month, year){
 
     let mystore = await Store.findOne({
@@ -749,6 +813,7 @@ async function findStoreMonthly(month, year){
 
     return mystore
 }
+
 function getDate(){
     function pad2(n) {
         return (n < 10 ? '0' : '') + n;
@@ -762,12 +827,14 @@ function getDate(){
     var date =  year+"-"+month+"-"+day;
     return date
 }
+
 function isAuthUser(req, res, next){
     if(req.isAuthenticated()){
         return next()
     }
     res.redirect('/login')
 }
+
 function isAuthandMgrUser(req, res, next){
     if(req.isAuthenticated()){
         if(req.user.role == "Management"){
@@ -779,6 +846,7 @@ function isAuthandMgrUser(req, res, next){
     res.redirect('/login')
     }
 }
+
 function isnotAuthUser(req, res, next){
     if(req.isAuthenticated()){
     res.redirect('/courses')
@@ -858,6 +926,7 @@ async function addSale(a, user, myweek, store, mysales, weeklyStore, logSale){
     
     userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
 }
+
 async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale){
 
     var stringValue = "return"
@@ -1011,7 +1080,7 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     weeklySales.weeklyhours = weekoldhours
     weeklySales.acc = acc
     weeklySales.fdp = fdp
-    weeklySales.fdpAttach = fdpAttach
+    weeklySales.fdpAttach = fdpAttach.toFixed(2)
     weeklySales.year = year
     weeklySales.week = week
     weeklySales.user = a.rep
@@ -1047,7 +1116,7 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     weekStore.weeklyhours = weeklyStore.weeklyhours
     weekStore.acc = acc1
     weekStore.fdp = fdp1
-    weekStore.fdpAttach = fdpAttach1
+    weekStore.fdpAttach = fdpAttach1.toFixed(2)
     weekStore.year = year
     weekStore.week = week
     weekStore.totalSubs = totalSubs1
@@ -1397,4 +1466,5 @@ async function userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, 
 
     logSale= await logSale.save()
 }
+
 app.listen(process.env.PORT || 5000)

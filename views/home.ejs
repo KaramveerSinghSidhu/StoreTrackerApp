@@ -8,7 +8,12 @@
 
     <title>StoreTracker | 5501</title>
 </head>
-<body class="bg-warning">
+<style>
+    body{
+        background: rgba(250, 220, 0, 1);
+    }
+</style>
+<body class="">
     <div>
     <div class="row">
         <h1 class="col m-5">Store 5501</h1>
@@ -30,7 +35,7 @@
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/sales">Rep Sales</a></li>
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/store">Store Sales</a></li>
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/returns">Returns</a></li>
-                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/logs">Logs</a></li>
+                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/promos">Promos</a></li>
             </ul>
         </nav>
     </div>
@@ -82,7 +87,7 @@
                     <% if(myweek.weeklyAchieved == "Green") { %>
                             <a class="btn btn-success btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% }else if(myweek.weeklyAchieved == "Yellow"){ %>
-                            <a class="btn btn-warning btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
+                            <a class="btn btn-dark btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% }else{ %>
                             <a class="btn btn-danger btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% } %>
@@ -121,7 +126,7 @@
             <div class="row ps-3 pb-3 pe-3 text-center pb-5 mb-5">
                 <div class="col"></div>
                 <div class="col"></div>
-                <button class="col btn-warning btn" type='submit'>Add Sale</button>
+                <button class="col btn-dark btn" type='submit'>Add Sale</button>
                 <div class="col"></div>
                 <div class="col"></div>
             </div>
