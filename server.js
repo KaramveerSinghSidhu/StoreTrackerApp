@@ -1157,7 +1157,7 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.now(year, month, dayy).setZone('America/Denver')
     var day = dateOfDay.weekdayLong
-    var week = dateOfDay.weekNumber
+    let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
 
     //fetching old post info
     if(mysales.nac == null){nac = 0}else{nac = mysales.nac}
