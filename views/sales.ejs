@@ -43,14 +43,18 @@
 <div class="container">
     <h2 class="m-5 text-center ps-4">Rep Sales</h2>
     <div class="container row mt-4 mb-4 bg-dark p-2 ms-1">
-        <div class="col ms-4"><button class="btn-secondary btn">Last Week</button></div>
+        <div class="col ms-4"><a class="btn-secondary btn" href="/weekly/<%= user.username %>/<%= year %>/<%=week - 1%>">Last Week</a></div>
         <div class="col"></div>
         <div class="col"></div>
         <div class="col"></div>
         <div class="col"></div>
         <div class="col"></div>
         <div class="col"></div>
-        <div class="col"><button class="btn-secondary me-2 btn ms-2">Next Week</button></div>
+        <% if (week + 1 > weekNow){ %>
+        <div class="col"><a class="btn-secondary me-2 btn" href="/weekly/<%= user.username %>/<%= year %>/<%=week%>">Next Week</a></div>
+        <% } else { %>
+            <div class="col"><a class="btn-secondary me-2 btn" href="/weekly/<%= user.username %>/<%= year %>/<%=week + 1%>">Next Week</a></div>
+            <%}%>
     </div>
     <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary">
         <h6 class="col">Date</h6>
