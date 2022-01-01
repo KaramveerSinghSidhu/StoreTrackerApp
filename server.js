@@ -185,7 +185,7 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
 
 app.get('/sales', isAuthUser, async (req, res) => {
     let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
-    let year = DateTime.now().setZone('America/Denver').year
+    let year = DateTime.now().setZone('America/Denver').minus({day: 1}).year
     let weekNow = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
     let user = req.user
 
@@ -201,7 +201,7 @@ app.get('/sales', isAuthUser, async (req, res) => {
 
 app.get('/store', isAuthUser, async (req, res) => {
     let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
-    let year = DateTime.now().setZone('America/Denver').year
+    let year = DateTime.now().setZone('America/Denver').minus({day: 1}).year
     var month = DateTime.now().setZone('America/Denver').month
     let weekNow = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
     
@@ -212,6 +212,9 @@ app.get('/store', isAuthUser, async (req, res) => {
 
     let storeWeekly = await findStoreWeek(week, year, month)
     let thisWeek = await findWeeklySales(week, year)
+
+    year = parseInt(year)
+    week = parseInt(week)
 
     
 
@@ -227,6 +230,7 @@ app.get('/store/:year/:week', isAuthUser, async (req, res) => {
     let storeWeekly = await findStoreWeek(week, year, user)
     let thisWeek = await findWeeklySales(week, year)
 
+    year = parseInt(year)
     week = parseInt(week)
     
 
@@ -325,7 +329,9 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
 
     var date = a.saleDate
     var strofDate = date.split('-')
-    var year = parseInt(strofDate[0])
+    //var year = parseInt(strofDate[0])
+    
+    let year = DateTime.now().setZone('America/Denver').minus({day: 1}).year
     var day = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.now(year, month, day).setZone('America/Denver')

@@ -44,7 +44,11 @@
     <h3 class="col m-5 text-center">Store Weekly Sales</h3>
 
     <div class="container row mt-4 mb-4 bg-dark p-2 ms-1">
-        <div class="col ms-4"><a class="btn-secondary btn" href="/store/<%= year %>/<%=week - 1%>">Last Week</a></div>
+        <% if (week - 1 == 0){ %>
+            <div class="col"><a class="btn-secondary me-2 btn" onClick="weekCheck()" href="/store/<%= year - 1 %>/<%=52%>">Last Week</a></div>
+            <% } else { %>
+        <div class="col ms-4"><a class="btn-secondary btn" onClick="weekCheck()" href="/store/<%= year %>/<%=week - 1%>">Last Week</a></div>
+        <%}%>
         <div class="col"></div>
         <div class="col"></div>
         <div class="col"></div>
@@ -54,10 +58,10 @@
         <div class="col"></div>
         <div class="col"></div>
         <div class="col"></div>
-        <% if (week + 1 > weekNow){ %>
-        <div class="col"><a class="btn-secondary me-2 btn" href="/store/<%= year %>/<%=week%>">Next Week</a></div>
-        <% } else { %>
-            <div class="col"><a class="btn-secondary me-2 btn" href="/store/<%= year %>/<%=week + 1%>">Next Week</a></div>
+        <% if (week + 1 > 52){ %>
+            <div class="col"><a class="btn-secondary me-2 btn" onClick="weekCheck()" href="/store/<%= year + 1 %>/<%=1%>">Next Week</a></div>
+            <% } else { %>
+            <div class="col"><a class="btn-secondary me-2 btn" onClick="weekCheck()"href="/store/<%= year %>/<%=week + 1%>">Next Week</a></div>
             <%}%>
     </div>
     <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary">
