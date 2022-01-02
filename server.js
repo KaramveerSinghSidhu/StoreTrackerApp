@@ -1024,7 +1024,8 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     var dayy = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.utc(year, month, dayy).setZone('America/Denver')
-    var week = dateOfDay.plus({day: 1}).weekNumber
+    let week = DateTime.utc(year, month, dayy).setZone('America/Denver').plus({day: 2}).weekNumber
+
 
     if(isNaN(parseInt(myweek.termSubs))){
         myweek.termSubs = 0
@@ -1190,6 +1191,8 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
         await WeeklySales.findByIdAndDelete(myweek._id)
     }
 
+    console.log(weekStore)
+    console.log(weeklySales)
     
 }
 
@@ -1204,7 +1207,7 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.utc(year, month, dayy).setZone('America/Denver')
     var day = dateOfDay.plus({day: 1}).weekdayLong
-    let week = DateTime.utc().setZone('America/Denver').plus({day: 1}).weekNumber
+    let week = DateTime.utc(year, month, dayy).setZone('America/Denver').plus({day: 2}).weekNumber
 
     //fetching old post info
     if(mysales.nac == null){nac = 0}else{nac = mysales.nac}
