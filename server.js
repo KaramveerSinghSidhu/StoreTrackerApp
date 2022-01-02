@@ -185,7 +185,7 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
 
 app.get('/sales', isAuthUser, async (req, res) => {
     let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
-    let year = DateTime.now().setZone('America/Denver').minus({day: 1}).year
+    let year = DateTime.now().setZone('America/Denver').year
     let weekNow = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
     let user = req.user
 
@@ -201,7 +201,7 @@ app.get('/sales', isAuthUser, async (req, res) => {
 
 app.get('/store', isAuthUser, async (req, res) => {
     let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
-    let year = DateTime.now().setZone('America/Denver').minus({day: 1}).year
+    let year = DateTime.now().setZone('America/Denver').year
     var month = DateTime.now().setZone('America/Denver').month
     let weekNow = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
     
@@ -329,9 +329,8 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
 
     var date = a.saleDate
     var strofDate = date.split('-')
-    //var year = parseInt(strofDate[0])
+    var year = parseInt(strofDate[0])
     
-    let year = DateTime.now().setZone('America/Denver').minus({day: 1}).year
     var day = parseInt(strofDate[2])
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.now(year, month, day).setZone('America/Denver')
@@ -1016,6 +1015,9 @@ async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale)
 
 async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,icommission, stringValue, ibpo, weeklyStore){
     //declaring vars
+    let saleForUser = await User.findOne({name: a.rep})
+    console.log(saleForUser.username)
+    console.log("update weekly")
     var date = a.saleDate
     var strofDate = date.split('-')
     var year = parseInt(strofDate[0])
@@ -1023,8 +1025,6 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     var month = parseInt(strofDate[1])
     var dateOfDay = DateTime.utc(year, month, dayy).setZone('America/Denver')
     var week = dateOfDay.plus({day: 1}).weekNumber
-
-    console.log(week)
 
     if(isNaN(parseInt(myweek.termSubs))){
         myweek.termSubs = 0
@@ -1116,27 +1116,27 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
         ars1 = 0
     }
 
-    let saleForUser = await User.findOne({name: a.rep})
     
     var target = myweek.target
     var strech = myweek.strech
     var weekoldhours = myweek.weeklyhours
-    var weeklySales = new WeeklySales()
 
+    var weeklySales = new WeeklySales()
+    
+    weeklySales.userID = saleForUser.username
+    weeklySales.user = a.rep
+    
+    weeklySales.year = year
+    weeklySales.week = week
     weeklySales.weeklyhours = weekoldhours
+    weeklySales.totalSubs = totalSubs
     weeklySales.acc = acc
     weeklySales.fdp = fdp
     weeklySales.fdpAttach = fdpAttach.toFixed(2)
-    weeklySales.year = year
-    weeklySales.week = week
-    weeklySales.user = a.rep
-    weeklySales.totalSubs = totalSubs
     weeklySales.ars = ars
     weeklySales.termSubs = termSubs
-    weeklySales.userID = saleForUser.username
     weeklySales.userCommission = weeklyCommission.toFixed(2)
     weeklySales.bpo = bpo
-
     weeklySales.target = target
     weeklySales.strech = strech
 
@@ -1157,17 +1157,18 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     var weekStore = new WeeklyStore()
     var target = weeklyStore.target
     var strech = weeklyStore.strech
+
+    weekStore.totalSubs = totalSubs1
+    weekStore.termSubs = termSubs1
+    weekStore.year = year
+    weekStore.week = week
     weekStore.target = target
     weekStore.strech = strech
     weekStore.weeklyhours = weeklyStore.weeklyhours
     weekStore.acc = acc1
     weekStore.fdp = fdp1
     weekStore.fdpAttach = fdpAttach1.toFixed(2)
-    weekStore.year = year
-    weekStore.week = week
-    weekStore.totalSubs = totalSubs1
     weekStore.ars = ars1
-    weekStore.termSubs = termSubs1
     weekStore.endOfWeek = weeklyStore.endOfWeek
 
     if(totalSubs1 >= target){

@@ -10,6 +10,7 @@ const promoSchema = new mongoose.Schema({
         PromoSocCode: String,
         OneSourceID: String,
         Eligibility: String,
+        
         isActive: Boolean,
         BeginDate: Date,
         FinishDate: Date
