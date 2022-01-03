@@ -384,7 +384,6 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
             weeklyStore = await findStoreWeek(week, year, month)
         }
 
-        console.log(weeklyStore)
 
         if(mysales == null){
             mysales = new WeeklySales({
@@ -432,10 +431,6 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
             userForID: user.username,
             timeanddate: dateOfDay
         })
-
-        //console.log(myweek)
-        //console.log(mysales)
-        console.log(weeklyStore)
 
 
         addSale(a, user, myweek, mystore, mysales, weeklyStore, logSale)
@@ -521,7 +516,6 @@ res.render('sale.ejs', {username: req.user, sale: sale})
 app.get('/promotion/:id', isAuthUser, async (req, res) => {
 
     var promo = await Promo.findById({_id: req.params.id})
-    console.log(promo)
     
     res.render('promo.ejs', {username: req.user, promo: promo, date: promo.startDate})
 })
@@ -548,11 +542,7 @@ app.get('/retire/promotion/:id', isAuthUser, async (req, res) => {
     var month = date.month.toString()
     var strDate = getInputDate(day, month, year)
 
-    console.log(await Promo.findById({_id: req.params.id}))
     var promo = await Promo.findByIdAndUpdate({_id: req.params.id},{isActive: false, endDate: strDate})
-
-    console.log("yee")
-    console.log(promo)
     promo = promo.save()
     
     res.redirect('/promos')
@@ -658,8 +648,6 @@ app.post('/added/promotion', isAuthUser, async (req, res) => {
     })
 
     promo = await promo.save()
-
-    console.log(promo)
 
     res.redirect('/promos')
 })
@@ -1130,8 +1118,6 @@ async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale)
 async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,icommission, stringValue, ibpo, weeklyStore){
     //declaring vars
     let saleForUser = await User.findOne({name: a.rep})
-    console.log(saleForUser.username)
-    console.log("update weekly")
     var date = a.saleDate
     var strofDate = date.split('-')
     var year = parseInt(strofDate[0])
@@ -1304,9 +1290,6 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     if(myweek._id != null){
         await WeeklySales.findByIdAndDelete(myweek._id)
     }
-
-    console.log(weekStore)
-    console.log(weeklySales)
     
 }
 
