@@ -533,6 +533,13 @@ app.get('/edit/promotion/:id', isAuthUser, async (req, res) => {
     res.render('promoEdit.ejs', {username: req.user, promo: promo, date: promo.startDate})
 })
 
+app.get('/delete/promotion/:id', isAuthandMgrUser, async (req, res) => {
+
+    var promo = await Promo.findByIdAndDelete({_id: req.params.id})
+    
+    es.redirect('/promos')
+})
+
 app.get('/retire/promotion/:id', isAuthUser, async (req, res) => {
 
     var date = DateTime.now().setZone('America/Denver')
