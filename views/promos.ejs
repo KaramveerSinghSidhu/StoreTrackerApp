@@ -40,15 +40,17 @@
         </nav>
     </div>
 </div>
+<h2 class="col text-center p-5">Promotions</h2>
 <div class="container">
-    <div class="pb-5 pt-5">
-        <h4 class="text-center mt-5 pb-2">Active Promotions</h4>
+    <div class="pb-5">
+        <h3 class="text-center mt-5 pb-2">Active</h3>
         <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary">
             <h6 class="col">Start</h6>
             <h6 class="col">End</h6>
             <h6 class="col">Promotion</h6>
             <h6 class="col">Types</h6>
             <h6 class="col">Terms</h6>
+            <h6 class="col">Plans</h6>
             <h6 class="col">SOC</h6>
             <h6 class="col">Details</h6>
         </div>
@@ -56,12 +58,13 @@
         <div class="bg-light mt-4">
             <div>
                 <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-light">
-                    <h6 class="col mt-3 mb-3"><%= promo.StartDate %></h6>
-                    <h6 class="col mt-3 mb-3"><%= promo.EndDate %></h6>
-                    <h6 class="col mt-2 "><%= promo.Title %></h6>
-                    <h6 class="col mt-3 mb-3"><%= promo.PromoFor %></h6>
-                    <h6 class="col mt-3 mb-3"><%= promo.PromoTerm %></h6>
-                    <h6 class="col mt-3 mb-3"><%= promo.PromoSocCode %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.startDate %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.endDate %></h6>
+                    <h6 class="col mt-2 "><%= promo.title %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.type %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.terms %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.plan %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.soccode %></h6>
                     <div class="col mt-3 mb-3">
                     <a class="btn-dark w-100 btn" href="/promotion/<%= promo.id%>">View</a>
                     </div>
@@ -79,13 +82,14 @@
         
     </div>
     <div class="pb-5">
-        <h4 class="text-center mt-5 pb-2">Retired Promotions</h4>
+        <h3 class="text-center mt-5 pb-2">Retired</h3>
         <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary">
             <h6 class="col">Start</h6>
             <h6 class="col">End</h6>
             <h6 class="col">Promotion</h6>
             <h6 class="col">Types</h6>
             <h6 class="col">Terms</h6>
+            <h6 class="col">Plans</h6>
             <h6 class="col">SOC</h6>
             <h6 class="col">Details</h6>
         </div>
@@ -93,12 +97,13 @@
         <div class="bg-light mt-4">
             <div>
                 <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-light">
-                    <h6 class="col mt-3 mb-3"><%= promo.StartDate %></h6>
-                    <h6 class="col mt-3 mb-3"><%= promo.EndDate %></h6>
-                    <h6 class="col mt-2 "><%= promo.Title %></h6>
-                    <h6 class="col mt-3 mb-3"><%= promo.PromoFor %></h6>
-                    <h6 class="col mt-3 mb-3"><%= promo.PromoTerm %></h6>
-                    <h6 class="col mt-3 mb-3"><%= promo.PromoSocCode %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.startDate %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.endDate %></h6>
+                    <h6 class="col mt-2 "><%= promo.title %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.type %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.terms %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.plan %></h6>
+                    <h6 class="col mt-3 mb-3"><%= promo.soccode %></h6>
                     <div class="col mt-3 mb-3">
                     <a class="btn-dark w-100 btn" href="/promotion/<%= promo.id%>">View</a>
                     </div>
@@ -106,6 +111,14 @@
             </div>
         </div>
         <% }) %>
+    </div>
+    <div class="row ">
+        <div class="col w-25"></div>
+        <div class="col w-25"></div>
+    </div>
+    <div class="row p-5">
+        <div class="col w-25"></div>
+        <div class="col w-25"></div>
     </div>
 </div>
 </body>

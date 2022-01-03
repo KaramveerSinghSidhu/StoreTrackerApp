@@ -21,7 +21,7 @@ const user = require('./models/user')
 const WeeklyStore = require('./models/weeklyStore')
 const Logs = require('./models/logs')
 const weeklyStore = require('./models/weeklyStore')
-const { findOne } = require('./models/user')
+const { findOne, findById, findByIdAndDelete } = require('./models/user')
 
 
 const commnac = process.env.COMMNAC
@@ -139,7 +139,6 @@ app.get('/promos', isAuthUser, async (req, res) => {
     var year = date.year
     var day = date.day.toString()
     var month = date.month.toString()
-    let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
     var strDate = getInputDate(day, month, year)
     let users = await findOtherUsers(req.user.name)
 
@@ -149,6 +148,29 @@ app.get('/promos', isAuthUser, async (req, res) => {
 
 
     res.render('promos.ejs', {users: users, username: req.user, date: strDate, activePromos: activePromos, retiredPromos: retiredPromos})
+})
+
+app.get('/add/promotion', isAuthUser, async (req, res) => {
+    var date = DateTime.now().setZone('America/Denver')
+    var year = date.year
+    var day = date.day.toString()
+    var month = date.month.toString()
+    var promoDate = getInputDate(day, month, year)
+
+    var promo = new Promo({
+        title: "",
+        type: "",
+        terms: "",
+        soccode: "",
+        plan: "",
+        desc: "",
+        onesourceID: "",
+    })
+
+
+
+
+    res.render('promoAdd.ejs', {username: req.user, date: promoDate, promo: promo})
 })
 
 app.get('/5501/home', isAuthUser, async (req, res) => {
@@ -489,18 +511,73 @@ app.post('/return/sale', isAuthUser, async (req, res) => {
     }catch{}
 })
 
-app.get('/sale/:id', async (req, res) => {
+app.get('/sale/:id', isAuthUser, async (req, res) => {
 
 var sale = await DailySales.findById({_id: req.params.id})
 
 res.render('sale.ejs', {username: req.user, sale: sale})
 })
 
-app.get('/promotion/:id', async (req, res) => {
+app.get('/promotion/:id', isAuthUser, async (req, res) => {
+
+    var promo = await Promo.findById({_id: req.params.id})
+    console.log(promo)
+    
+    res.render('promo.ejs', {username: req.user, promo: promo, date: promo.startDate})
+})
+
+app.get('/edit/promotion/:id', isAuthUser, async (req, res) => {
 
     var promo = await Promo.findById({_id: req.params.id})
     
-    res.render('promo.ejs', {username: req.user, sale: sale})
+    res.render('promoEdit.ejs', {username: req.user, promo: promo, date: promo.startDate})
+})
+
+app.get('/retire/promotion/:id', isAuthUser, async (req, res) => {
+
+    var date = DateTime.now().setZone('America/Denver')
+    var year = date.year
+    var day = date.day.toString()
+    var month = date.month.toString()
+    var strDate = getInputDate(day, month, year)
+
+    console.log(await Promo.findById({_id: req.params.id}))
+    var promo = await Promo.findByIdAndUpdate({_id: req.params.id},{isActive: false, endDate: strDate})
+
+    console.log("yee")
+    console.log(promo)
+    promo = promo.save()
+    
+    res.redirect('/promos')
+})
+
+app.post('/updated/promotion/:id', isAuthUser, async (req, res) => {
+    var a = req.body
+    var date = a.startDate
+    var strofDate = date.split('-')
+    var year = parseInt(strofDate[0])
+    var dayy = parseInt(strofDate[2])
+    var month = parseInt(strofDate[1])
+    var dateOfDay = DateTime.utc(year, month, dayy).setZone('America/Denver')
+
+    var promo = new Promo({
+        title: a.title,
+        type: a.type,
+        terms: a.terms,
+        soccode: a.soccode,
+        plan: a.plans,
+        desc: a.description,
+        onesourceID: a.onesourceID,
+        startDate: date,
+        endDate: "Ongoing",
+        isActive: true,
+        BeginDate: dateOfDay
+    })
+
+    promo = await promo.save()
+    await Promo.findByIdAndDelete({_id: req.params.id})
+
+    res.redirect('/promos')
 })
 
 app.get('/weekly/:username/:year/:week', isAuthUser, async (req, res) => {
@@ -530,14 +607,14 @@ app.get('/weekly/:username/:year/:week', isAuthUser, async (req, res) => {
     res.render('sales.ejs', {mysales: mysales, username: req.user, myweek: myweek, year: year, weekNow: weekNow, user: user, week: week})
 })
 
-app.get('/sale/delete/:id', async (req, res) => {
+app.get('/sale/delete/:id', isAuthUser, async (req, res) => {
     
     await DailySales.findByIdAndDelete({_id: req.params.id})
     
     res.redirect('/sales')
 })
 
-app.post('/delete/user', async (req, res) => {
+app.post('/delete/user', isAuthUser, async (req, res) => {
 
     var username = req.body.rep
     
@@ -550,7 +627,37 @@ app.post('/delete/user', async (req, res) => {
     res.redirect('/store/manage')
 })
 
-app.post('/retire/user', async (req, res) => {
+app.post('/added/promotion', isAuthUser, async (req, res) => {
+    var a = req.body
+    var date = a.startDate
+    var strofDate = date.split('-')
+    var year = parseInt(strofDate[0])
+    var dayy = parseInt(strofDate[2])
+    var month = parseInt(strofDate[1])
+    var dateOfDay = DateTime.utc(year, month, dayy).setZone('America/Denver')
+
+    var promo = new Promo({
+        title: a.title,
+        type: a.type,
+        terms: a.terms,
+        soccode: a.soccode,
+        plan: a.plans,
+        desc: a.description,
+        onesourceID: a.onesourceID,
+        startDate: date,
+        endDate: "Ongoing",
+        isActive: true,
+        BeginDate: dateOfDay
+    })
+
+    promo = await promo.save()
+
+    console.log(promo)
+
+    res.redirect('/promos')
+})
+
+app.post('/retire/user', isAuthUser, async (req, res) => {
 
     var username = req.body.repname
     

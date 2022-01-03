@@ -41,9 +41,9 @@
     </div>
 </div>
 <div>
-    <h2 class="col text-center p-5">Add Promotion</h2>
+    <h2 class="col text-center p-5">Edit Promotion</h2>
     <div class="container pt-5 mt-5 pb-5 mb-5 card">
-        <form class="new-form" action="/added/promotion" method="POST">
+        <form class="new-form" action="/updated/promotion/<%=promo.id%>" method="POST">
 
             <div class="row pt-3">
                 <div class="col w-25"></div>
@@ -93,7 +93,7 @@
                 <div class="col w-25 ms-5 me-5 text-center">
                     <div class="row text-center"><label class="h5">Plans</label></div>
                     <div class="row text-center">
-                        <input list="plans" name="plans" class="text-center new-form" required  value="<%=promo.plans%>">
+                        <input list="plans" name="plans" class="text-center new-form" required  value="<%=promo.plan%>">
                         <datalist id="plans">
                             <option value="Data, Talk & Text + Talk & Text">
                             <option value="Data, Talk & Text">
@@ -106,7 +106,7 @@
             <div class="row">
                 <div class="col text-center w-75 ms-5 me-5">
                     <div class="row"><label class="col text-center h5">Description</label></div>
-                    <div class="row"><textarea class="col text-center new-form" rows="8" cols="100" required id="description" name="description" value="<%=promo.desc%>"></textarea></div>
+                    <div class="row"><textarea class="col text-center new-form" rows="8" cols="100" required id="description" name="description" ><%=promo.desc%></textarea></div>
                 </div>
             </div>
             <div class="row pt-5 pb-5">
@@ -127,7 +127,7 @@
 
             <div class="row pt-5 pb-5">
                 <div class="col w-25"></div>
-                <div class="col text-center"><button type="submit" class="new-form btn btn-dark">Add Promo</button></div>
+                <div class="col text-center"><button type="submit" class="new-form btn btn-dark">Update Promo</button></div>
                 <div class="col w-25"></div>
             </div>
 

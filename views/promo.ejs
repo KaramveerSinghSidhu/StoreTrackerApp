@@ -41,19 +41,18 @@
     </div>
 </div>
 <div>
-    <h2 class="col text-center p-5">Add Promotion</h2>
     <div class="container pt-5 mt-5 pb-5 mb-5 card">
         <form class="new-form" action="/added/promotion" method="POST">
-
-            <div class="row pt-3">
-                <div class="col w-25"></div>
-                <div class="col w-50 text-center h4"><label class="w-100">Promotion</label></div>
-                <div class="col w-25"></div>
+        
+            <div class="row pt-5">
+                <div class="col"></div>
+                <h2 class="col text-center">Promotion</h2>
+                <div class="col"></div>
             </div>
 
             <div class="row">
                 <div class="col w-25"></div>
-                <div class="col text-center w-100"><input type="text" class="w-100 new-form text-center" id="title" name="title" value="<%=promo.title%>" required></div>
+                <div class="col text-center w-100"><label class="w-100 new-form h5 text-center"><%=promo.title%></div>
                 <div class="col w-25"></div>
             </div>
 
@@ -62,51 +61,35 @@
                 <div class="col w-25 ms-5 me-5 text-center">
                     <div class="row text-center"><label class="h5">Type</label></div>
                     <div class="row text-center">
-                        <input list="type" name="type" class="text-center new-form" required value="<%=promo.type%>">
-                        <datalist id="type">
-                            <option value="NAC + HUP">
-                            <option value="NAC">
-                            <option value="HUP">
-                        </datalist>
+                        <label class="text-center new-form"><%=promo.type%></label>
                     </div>
                 </div>
 
                 <div class="col w-25 ms-5 me-5 text-center">
                     <div class="row text-center"><label class="h5">Terms</label></div>
                     <div class="row text-center">
-                        <input list="terms" name="terms" class="text-center new-form" required value="<%=promo.terms%>">
-                        <datalist id="terms">
-                            <option value="BYOP + TERM">
-                            <option value="TERM">
-                            <option value="BYOP">
-                        </datalist>
+                        <label class="text-center new-form"><%=promo.terms%></label>
                     </div>
                 </div>
 
                 <div class="col w-25 ms-5 me-5 text-center">
                     <div class="row text-center"><label class="h5">SOC Code</label></div>
                     <div class="row text-center">
-                        <input type="text" name="soccode" onkeyup="this.value = this.value.toUpperCase()" class="text-center new-form" required value="<%=promo.soccode%>">
+                        <label class="text-center new-form"><%=promo.soccode%></label>
                     </div>
                 </div>
 
                 <div class="col w-25 ms-5 me-5 text-center">
                     <div class="row text-center"><label class="h5">Plans</label></div>
                     <div class="row text-center">
-                        <input list="plans" name="plans" class="text-center new-form" required  value="<%=promo.plans%>">
-                        <datalist id="plans">
-                            <option value="Data, Talk & Text + Talk & Text">
-                            <option value="Data, Talk & Text">
-                            <option value="Talk & Text">
-                            <option value="Data">
-                        </datalist>
+                        <label list="plans" name="plans" class="text-center new-form" required  ><%=promo.plan%></label>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col text-center w-75 ms-5 me-5">
                     <div class="row"><label class="col text-center h5">Description</label></div>
-                    <div class="row"><textarea class="col text-center new-form" rows="8" cols="100" required id="description" name="description" value="<%=promo.desc%>"></textarea></div>
+                    <div class="row"><p class="col text-center new-form"><%=promo.desc%></p></div>
                 </div>
             </div>
             <div class="row pt-5 pb-5">
@@ -114,29 +97,37 @@
                 <div class="col text-center">
                     <div class="row text-center"><label class="h6">1Source ID</label></div>
                     <div class="row text-center">
-                        <input type="text" id="onesourceID" name="onesourceID" onkeyup="this.value = this.value.toUpperCase()" class="text-center new-form"  value="<%=promo.onesourceID%>">
+                        <label class="text-center new-form"><%=promo.onesourceID%></label>
                     </div>
                 </div>
                 <div class="col"></div>
                 <div class="col">
                     <div class="row text-center"><label class="h6">Start Date</label></div>
-                    <div class="row text-center"><input type="date" id="startDate" name="startDate" value="<%=date%>"></div>
+                    <div class="row text-center"><label value=""><%=date%></label></div>
                 </div>
                 <div class="col"></div>
             </div>
 
+            <% if(promo.isActive){%>
             <div class="row pt-5 pb-5">
+                <% if(username.role == "Management"){%>
+                    <div class="col w-25"></div>
+                    <div class="col text-center"><a href="/delete/promotion/<%=promo._id%>" class="new-form btn btn-danger w-50">Delete</a></div>
+                <%}else{%>
+                    <div class="col w-25"></div>
+                <%}%>
+                <div class="col text-center"><a href="/edit/promotion/<%=promo._id%>" class="new-form btn btn-dark w-50">Edit Promo</a></div>
+                <div class="col text-center"><a href="/retire/promotion/<%=promo._id%>" class="new-form btn btn-danger w-50">Retire Promo</a></div>
                 <div class="col w-25"></div>
-                <div class="col text-center"><button type="submit" class="new-form btn btn-dark">Add Promo</button></div>
+            </div>
+            <%}%>
+            <div class="row pb-5">
+                <div class="col w-25"></div>
+                <div class="col text-center"><a href="/promos" class="new-form btn btn-dark w-25">Cancel</a></div>
                 <div class="col w-25"></div>
             </div>
 
         </form>
-        <div class="row pb-5">
-            <div class="col w-25"></div>
-            <div class="col text-center"><a href="/promos" class="new-form btn btn-dark w-25">Cancel</a></div>
-            <div class="col w-25"></div>
-        </div>
     </div> 
 </div>
 </body>
