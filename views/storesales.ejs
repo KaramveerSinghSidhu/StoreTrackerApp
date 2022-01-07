@@ -99,7 +99,9 @@
                         <% } %>
                 </h6>
                 <h6 class="col">
-                    <% if(sale.weeklyAchieved == "Green") { %>
+                        <% if(sale.weeklyAchieved == "Black") { %>
+                            <a class="btn btn-dark btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
+                        <% }else if(sale.weeklyAchieved == "Green"){ %>
                             <a class="btn btn-success btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% }else if(sale.weeklyAchieved == "Yellow"){ %>
                             <a class="btn btn-warning btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>

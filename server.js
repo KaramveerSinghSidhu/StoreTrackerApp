@@ -789,6 +789,7 @@ async function genWeeklySales(year, week){
                     ars: 0,
                     fdpAttach: 0,
                     fdp: 0,
+                    weeklyhours: 20
                 })
                 myweek = await myweek.save()
             }
@@ -1479,7 +1480,9 @@ async function updateWeekMngr(a, week, year, thisWeek){
     weekStore.termSubs = thisWeek.termSubs
     weekStore.endOfWeek = thisWeek.endOfWeek
 
-    if(totalSubs >= target){
+    if(totalSubs == 0 && weeklyhours == 0){
+        weekStore.weeklyAchieved = "Black"
+    }else if(totalSubs >= target){
         weekStore.weeklyAchieved = "Yellow"
         if(totalSubs >= strech){
             weekStore.weeklyAchieved = "Green"
@@ -1556,7 +1559,9 @@ async function updateWeeklyUsersMngr(a, week, year, weeklySales){
     newWeek.target = target
     newWeek.strech = strech
 
-    if(totalSubs >= target){
+    if(newWeek.totalSubs == 0 && newWeek.weeklyhours == 0){
+        newWeek.weeklyAchieved = "Black"
+    }else if(totalSubs >= target){
         newWeek.weeklyAchieved = "Yellow"
         if(totalSubs >= strech){
             newWeek.weeklyAchieved = "Green"
