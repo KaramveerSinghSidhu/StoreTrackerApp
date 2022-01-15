@@ -556,7 +556,6 @@ app.post('/extend/promotion/:id', isAuthUser, async (req, res) => {
     var month = date.month.toString()
     var strDate = getInputDate(day, month, year)
     var enddateText
-    console.log(a.date)
     if(a.date == null || a.date == ""){
         enddateText = "Extended"
     }else{
