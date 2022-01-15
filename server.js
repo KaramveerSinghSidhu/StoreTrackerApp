@@ -103,7 +103,7 @@ app.post('/register', isAuthandMgrUser, async (req, res) => {
     }
 })
 
-app.get('/', isnotAuthUser, (req, res) => {
+app.get('/', (req, res) => {
     res.redirect('/home')
 })
 
