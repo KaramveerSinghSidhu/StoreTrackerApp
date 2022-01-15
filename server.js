@@ -548,6 +548,28 @@ app.get('/retire/promotion/:id', isAuthUser, async (req, res) => {
     res.redirect('/promos')
 })
 
+app.post('/extend/promotion/:id', isAuthUser, async (req, res) => {
+    var a = req.body
+    var date = DateTime.now().setZone('America/Denver')
+    var year = date.year
+    var day = date.day.toString()
+    var month = date.month.toString()
+    var strDate = getInputDate(day, month, year)
+    var enddateText
+    console.log(a.date)
+    if(a.date == null || a.date == ""){
+        enddateText = "Extended"
+    }else{
+    enddateText = a.date
+    }
+
+
+    var promo = await Promo.findByIdAndUpdate({_id: req.params.id},{isActive: true, endDate: enddateText})
+    promo = promo.save()
+    
+    res.redirect('/promos')
+})
+
 app.post('/updated/promotion/:id', isAuthUser, async (req, res) => {
     var a = req.body
     var date = a.startDate
