@@ -531,7 +531,7 @@ app.get('/delete/promotion/:id', isAuthandMgrUser, async (req, res) => {
 
     var promo = await Promo.findByIdAndDelete({_id: req.params.id})
     
-    es.redirect('/promos')
+    res.redirect('/promos')
 })
 
 app.get('/retire/promotion/:id', isAuthUser, async (req, res) => {
@@ -543,7 +543,7 @@ app.get('/retire/promotion/:id', isAuthUser, async (req, res) => {
     var strDate = getInputDate(day, month, year)
 
     var promo = await Promo.findByIdAndUpdate({_id: req.params.id},{isActive: false, endDate: strDate})
-    promo = promo.save()
+    promo = await promo.save()
     
     res.redirect('/promos')
 })
