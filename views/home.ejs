@@ -35,7 +35,6 @@
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/sales">Rep Sales</a></li>
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/store">Store Sales</a></li>
                 <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/returns">Returns</a></li>
-                <li class="d-inline col"><a class="btn ps-4 p-3 pe-4 me-5 ms-5 col btn-dark" href="/promos">Promos</a></li>
             </ul>
         </nav>
     </div>
@@ -131,6 +130,31 @@
                 <div class="col"></div>
             </div>
         </form>
+    </div>
+    <div>
+        <h3 class="col text-center">Today's Sales</h3>
+        <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary">
+            <h6 class="col">Date:</h6>
+            <h6 class="col">Total Subs</h6>
+            <h6 class="col">Accessories</h6>
+            <h6 class="col">Term Subs</h6>
+            <h6 class="col">FDP</h6>
+            <h6 class="col">ARS</h6>
+            <h6 class="col">FDP%</h6>
+            <h6 class="col">BPO USED</h6>
+            <h6 class="col">Week</h6>
+        </div>
+        <div class="row ps-3 pt-3 pe-3 pb-3 mt-4 mb-5 text-center bg-secondary">
+            <h6 class="col mt-2"><%= storeDaily.date %></h6>
+            <h6 class="col mt-2"><%= storeDaily.totalSubs %></h6>
+            <h6 class="col mt-2">$<%= storeDaily.acc %></h6>
+            <h6 class="col mt-2"><%= storeDaily.termSubs %></h6>
+            <h6 class="col mt-2"><%= storeDaily.fdp %></h6>
+            <h6 class="col mt-2">$<%= storeDaily.ars %></h6>
+            <h6 class="col mt-2"><%= storeDaily.fdpAttach %>%</h6>
+            <h6 class="col mt-2">$<%= storeDaily.bpo %></h6>
+            <h6 class="col mt-2">Week: <%= storeDaily.week %></h6>
+        </div>
     </div>
 </div>
 </body>

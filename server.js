@@ -22,6 +22,7 @@ const WeeklyStore = require('./models/weeklyStore')
 const Logs = require('./models/logs')
 const weeklyStore = require('./models/weeklyStore')
 const { findOne, findById, findByIdAndDelete } = require('./models/user')
+const DailyStore = require('./models/dailyStore')
 
 
 const commnac = process.env.COMMNAC
@@ -80,8 +81,6 @@ passport.use(new LocalStrategy(function (username, password, done) {
 
 
 
-
-
 app.get('/register', isAuthandMgrUser, (req, res) => {
     res.render('register.ejs')
 })
@@ -128,10 +127,10 @@ app.get('/home', isAuthUser, async (req, res) => {
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
         let weeklySales = findStoreWeek(week, year, month)
+        let storeDaily = await getStoreDaily(year, week, day, strDate)
+        console.log(storeDaily)
 
-
-
-        res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek})
+        res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek, storeDaily: storeDaily})
 })
 
 app.get('/promos', isAuthUser, async (req, res) => {
@@ -184,21 +183,13 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         let users = await findOtherUsers(req.user.name)
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
+        let storeDaily = await getStoreDaily(year, week, day, strDate)
+        console.log(storeDaily)
 
-        let promo = new Promo({
-            Title: "$120 Accessory Promotion - $5/mo 24 months",
-            StartDate: "13 Dec 2021",
-            EndDate: "Ongoing",
-            PromoFor: "NAC & HUP",
-            PromoTerm: "TERM & BYOP",
-            PromoSocCode: "TAGSRA155",
-            isActive: false
-        })
-        //promo = await promo.save()
 
         
 
-        res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek})
+        res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek, storeDaily: storeDaily})
     }
     catch{
         res.redirect('/5501/home')
@@ -359,6 +350,13 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
     var daystr = dateOfDay.weekdayLong
     let week = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
 
+
+    var dateNow = DateTime.now().setZone('America/Denver')
+    var yearNow = dateNow.year
+    var dayNow = dateNow.day.toString()
+    var monthNow = dateNow.month.toString()
+    var strDate = getInputDate(dayNow, monthNow, yearNow)
+
     
     
 
@@ -382,16 +380,18 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
         if(weeklyStore == null){
             
             weeklyStore = await findStoreWeek(week, year, month)
+            
         }
+        
 
 
         if(mysales == null){
             mysales = new WeeklySales({
-                date : 0,
-                year : 0,
-                month : 0,
-                week : 0,
-                day : 0,
+                date : strDate,
+                year : year,
+                month : month,
+                week : week,
+                day : day,
                 userID : req.user.username,
                 user : a.rep,
                 userCommission : 0,
@@ -771,6 +771,87 @@ app.get('/logout', (req, res) => {
 })
 
 //functions
+
+async function getStoreDaily(year, week, day, strDate){
+
+
+    var totalSubs=0
+    var acc=0
+    var termSubs=0
+    var fdp = 0
+    var bpo = 0
+    
+
+    oldDaily = await DailyStore.findOne({
+        week: week,
+        year: year,
+        day: day,
+        date: strDate
+    })
+
+    
+    if(oldDaily != null){
+    var id = oldDaily._id
+    await DailyStore.findByIdAndDelete({
+        _id: id
+    })
+    }
+
+    sales = await DailySales.find({
+        week: week,
+        year: year,
+        date: strDate
+    })
+    sales.forEach(sale =>{
+        console.log(sale)
+        var totalSubsi=0
+        var acci=0
+        var termSubsi=0
+        var fdpi = 0
+        var bpoi
+
+        if(sale.totalSubs == null){totalSubsi = 0}else{totalSubsi = sale.totalSubs}
+        if(sale.termSubs == null){termSubsi = 0}else{termSubsi = sale.termSubs}
+        if(sale.fdp == null){fdpi = 0}else{fdpi = sale.fdp}
+        if(sale.acc == null){acci = 0}else{acci = sale.acc}
+        if(sale.bpo == null){bpoi = 0}else{bpoi = sale.bpo}
+
+        bpo = bpo + bpoi
+        totalSubs = totalSubs + totalSubsi
+        acc = acc + acci
+        termSubs = termSubs + termSubsi
+        fdp = fdp + fdpi
+    })
+
+    var ars = (acc / totalSubs).toFixed(2)
+    var fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
+
+    if(isNaN(ars)){
+        ars = 0
+    }
+    if(isNaN(fdpAttach)){
+        fdpAttach = 0
+    }
+
+    let newDaily = new DailyStore({
+        totalSubs: totalSubs,
+        acc: acc,
+        termSubs: termSubs,
+        fdp: fdp,
+        ars: ars,
+        fdpAttach: fdpAttach,
+        bpo: bpo,
+        year: year,
+        week: week,
+        day: day,
+        date: strDate
+    })
+
+    await newDaily.save()
+
+    return newDaily
+}
+
 async function getActivePromos(){
     let promos = await Promo.find({
         isActive: true
@@ -1382,8 +1463,6 @@ async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifd
     var itermSubs = ( itnac + itmbb + ihup)
     var iars = (iacc / itotalSubs).toFixed(2)
     var ifdpAttach = ((ifdp / itermSubs).toFixed(2) * 100)
-
-    
 
     var totalSubs = (nac + tnac + mbb + tmbb + hup + mc + express)
     var termSubs = (tnac + tmbb + hup)
