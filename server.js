@@ -224,6 +224,7 @@ app.get('/store', isAuthUser, async (req, res) => {
     //let storeWeekly = await findStoreWeek(week, year, month)
     let storeWeekly = await getStoreWeekly(week, year)
     let thisWeek = await findWeeklySales(week, year)
+    await removeUnwantedWeeks(weeklySales)
 
     year = parseInt(year)
     week = parseInt(week)
@@ -1128,6 +1129,30 @@ async function findStoreWeek(week, year, month){
     
 
     return weeklyStore
+}
+
+async function removeUnwantedWeeks(weeklySales){
+
+    users = await User.find({})
+
+    weeklySales.forEach(sale => {
+        var isValid = false
+        users.forEach(user =>{
+            if(sale.user == user.name){
+                isValid = true
+            }
+        })
+
+        if(isValid != true){
+            Del(sale._id)
+        }
+    })
+
+    async function Del(id){
+        await WeeklySales.findByIdAndDelete(id)
+    }
+
+
 }
 
 async function findStoreMonthly(month, year){
