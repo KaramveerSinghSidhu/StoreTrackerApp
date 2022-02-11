@@ -126,9 +126,8 @@ app.get('/home', isAuthUser, async (req, res) => {
         let users = await findOtherUsers(req.user.name)
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
-        let weeklySales = findStoreWeek(week, year, month)
+        let weeklySales = await getStoreWeekly(week, year)
         let storeDaily = await getStoreDaily(year, week, day, strDate)
-        console.log(storeDaily)
 
         res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek, storeDaily: storeDaily})
 })
@@ -184,7 +183,6 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
         let storeDaily = await getStoreDaily(year, week, day, strDate)
-        console.log(storeDaily)
 
 
         
@@ -223,7 +221,8 @@ app.get('/store', isAuthUser, async (req, res) => {
         year: year
     }).sort({weeklyhours: -1})
 
-    let storeWeekly = await findStoreWeek(week, year, month)
+    //let storeWeekly = await findStoreWeek(week, year, month)
+    let storeWeekly = await getStoreWeekly(week, year)
     let thisWeek = await findWeeklySales(week, year)
 
     year = parseInt(year)
@@ -238,9 +237,11 @@ app.get('/store/:year/:week', isAuthUser, async (req, res) => {
     let week = req.params.week
     let year = req.params.year
     let weekNow = DateTime.now().setZone('America/Denver').plus({day: 1}).weekNumber
+    var month = DateTime.now().setZone('America/Denver').month
     genWeeklySales(year, week)
 
-    let storeWeekly = await findStoreWeek(week, year, user)
+    //let storeWeekly = await findStoreWeek(week, year, user)
+    let storeWeekly = await getStoreWeekly(week, year)
     let thisWeek = await findWeeklySales(week, year)
 
     year = parseInt(year)
@@ -379,7 +380,7 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
 
         if(weeklyStore == null){
             
-            weeklyStore = await findStoreWeek(week, year, month)
+            weeklyStore = await getStoreWeekly(week, year)
             
         }
         
@@ -803,7 +804,6 @@ async function getStoreDaily(year, week, day, strDate){
         date: strDate
     })
     sales.forEach(sale =>{
-        console.log(sale)
         var totalSubsi=0
         var acci=0
         var termSubsi=0
@@ -822,6 +822,8 @@ async function getStoreDaily(year, week, day, strDate){
         termSubs = termSubs + termSubsi
         fdp = fdp + fdpi
     })
+
+    
 
     var ars = (acc / totalSubs).toFixed(2)
     var fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
@@ -850,6 +852,110 @@ async function getStoreDaily(year, week, day, strDate){
     await newDaily.save()
 
     return newDaily
+}
+
+async function getStoreWeekly(week, year){
+
+    let dt = DateTime.fromObject({
+        weekYear: year,
+        weekNumber: week
+      })
+    const dateToStr = dt.endOf('week').minus({day: 1})
+    var eow = dateToStr.toISO().slice(0,10)
+    var strofDate = eow.split('-')
+    var year = parseInt(strofDate[0])
+    var day = parseInt(strofDate[2])
+    var month = parseInt(strofDate[1])
+    var dateOfDay = DateTime.now(year, month, day).setZone('America/Denver')
+    var daystr = dateOfDay.monthShort + " " + day
+
+    var totalSubs=0
+    var acc=0
+    var termSubs=0
+    var fdp = 0
+    var target, strech, weeklyhours, weeklyAchieved
+    
+
+    oldWeekly = await WeeklyStore.findOne({
+        week: week,
+        year: year
+    })
+
+    
+    if(oldWeekly != null){
+    var id = oldWeekly._id
+
+        if(oldWeekly.target == null){target = 25}else{target = oldWeekly.target}
+        if(oldWeekly.strech == null){strech = 35}else{strech = oldWeekly.strech}
+        if(oldWeekly.weeklyhours == null){weeklyhours = 140}else{weeklyhours = oldWeekly.weeklyhours}
+
+    await WeeklyStore.findByIdAndDelete({
+        _id: id
+    })
+    }
+
+    sales = await WeeklySales.find({
+        week: week,
+        year: year
+    })
+    sales.forEach(sale =>{
+        var totalSubsi=0
+        var acci=0
+        var termSubsi=0
+        var fdpi = 0
+        
+
+        
+        if(sale.totalSubs == null){totalSubsi = 0}else{totalSubsi = sale.totalSubs}
+        if(sale.termSubs == null){termSubsi = 0}else{termSubsi = sale.termSubs}
+        if(sale.fdp == null){fdpi = 0}else{fdpi = sale.fdp}
+        if(sale.acc == null){acci = 0}else{acci = sale.acc}
+
+        totalSubs = totalSubs + totalSubsi
+        acc = acc + acci
+        termSubs = termSubs + termSubsi
+        fdp = fdp + fdpi
+
+        
+    })
+
+    if(totalSubs > strech){
+        weeklyAchieved = "Green"
+    }else if (totalSubs > target){
+        weeklyAchieved = "Yellow"
+    }else{
+        weeklyAchieved = "Red"
+    }
+
+    var ars = (acc / totalSubs).toFixed(2)
+    var fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
+
+    if(isNaN(ars)){
+        ars = 0
+    }
+    if(isNaN(fdpAttach)){
+        fdpAttach = 0
+    }
+
+    let newWeekly = new WeeklyStore({
+        totalSubs: totalSubs,
+        acc: acc,
+        termSubs: termSubs,
+        fdp: fdp,
+        ars: ars,
+        fdpAttach: fdpAttach,
+        target: target,
+        strech: strech,
+        weeklyAchieved: weeklyAchieved,
+        weeklyhours: weeklyhours,
+        year: year,
+        week: week,
+        endOfWeek: daystr
+    })
+
+    await newWeekly.save()
+
+    return newWeekly
 }
 
 async function getActivePromos(){
@@ -1153,7 +1259,7 @@ async function addSale(a, user, myweek, store, mysales, weeklyStore, logSale){
     }
     updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress)
     
-    userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
+    //userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
 }
 
 async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale){
@@ -1213,7 +1319,7 @@ async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale)
 
     updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress)
 
-    userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
+    //userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
     
 
 }
@@ -1358,7 +1464,7 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
     
     weeklySales= await weeklySales.save()
 
-    var weekStore = new WeeklyStore()
+    /*var weekStore = new WeeklyStore()
     var target = weeklyStore.target
     var strech = weeklyStore.strech
 
@@ -1388,7 +1494,7 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
 
     if(weeklySales._id != null){
         await WeeklyStore.findByIdAndDelete(weeklyStore._id)
-    }
+    }*/
 
     if(myweek._id != null){
         await WeeklySales.findByIdAndDelete(myweek._id)
