@@ -9,7 +9,10 @@ const storeSchema = new mongoose.Schema({
         },
         storeBPO:{
             type: Number
-        }
+        },
+        store:Number,
+        area:Number,
+        brand:String
 })
 
 module.exports = mongoose.model('Store', storeSchema)

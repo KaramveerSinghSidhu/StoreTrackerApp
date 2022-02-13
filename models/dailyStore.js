@@ -11,7 +11,10 @@ const dailyStoreSchema = new mongoose.Schema({
         ars:Number,
         fdp:Number,
         fdpAttach:Number,
-        bpo:Number
+        bpo:Number,
+        store:Number,
+        area:Number,
+        brand:String
 })
 
 module.exports = mongoose.model('dailyStore', dailyStoreSchema)

@@ -1,3 +1,6 @@
+//setup
+//#region
+
 if(process.env.NODE_ENV !== 'production'){
     require('dotenv').config()
 }
@@ -79,8 +82,11 @@ passport.use(new LocalStrategy(function (username, password, done) {
     })
 }))
 
+//#endregion
 
 
+//paths
+//#region
 app.get('/register', isAuthandMgrUser, (req, res) => {
     res.render('register.ejs')
 })
@@ -771,9 +777,11 @@ app.get('/logout', (req, res) => {
     req.logOut()
     res.redirect('/login')
 })
+//#endregion
+
 
 //functions
-
+//#region
 async function getStoreDaily(year, week, day, strDate){
 
 
@@ -1849,5 +1857,7 @@ async function userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, 
 
     logSale= await logSale.save()
 }
+//#endregion
+
 
 app.listen(process.env.PORT || 5000)

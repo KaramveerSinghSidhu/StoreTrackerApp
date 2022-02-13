@@ -25,7 +25,10 @@ const dailySalesSchema = new mongoose.Schema({
         mcReview:Number,
         month:Number,
         userID:String,
-        userCommission:Number
+        userCommission:Number,
+        store:Number,
+        area:Number,
+        brand:String
 })
 
 module.exports = mongoose.model('DailySales', dailySalesSchema)

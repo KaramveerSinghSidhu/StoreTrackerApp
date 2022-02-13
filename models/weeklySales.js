@@ -24,7 +24,12 @@ const weeklySalesSchema = new mongoose.Schema({
         userCommission:Number,
         weeklyAchieved:String,
 
-        bpo:Number
+        bpo:Number,
+        store:Number,
+        area:Number,
+        brand:String
+
+
 })
 
 module.exports = mongoose.model('WeeklySales', weeklySalesSchema)

@@ -16,6 +16,9 @@ const weeklyStoreSchema = new mongoose.Schema({
         target:Number,
         strech:Number,
         endOfWeek:String,
+        store:Number,
+        area:Number,
+        brand:String
 })
 
 module.exports = mongoose.model('WeeklyStore', weeklyStoreSchema)
