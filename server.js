@@ -1004,7 +1004,7 @@ async function getStoreWeekly(week, year){
     }
 
     var ars = (acc / totalSubs).toFixed(2)
-    var fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
+    var fdpAttach = ((fdp / termSubs) * 100).toFixed(2)
 
     if(isNaN(ars)){
         ars = 0
