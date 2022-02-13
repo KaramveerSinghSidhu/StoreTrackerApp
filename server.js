@@ -191,8 +191,6 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         let storeDaily = await getStoreDaily(year, week, day, strDate)
 
 
-        updateSales()
-
         res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek, storeDaily: storeDaily})
     }
     catch{
@@ -790,7 +788,7 @@ async function updateSales(){
     })
 
     async function updateSale(id){
-        //await DailySales.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
+        await DailySales.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
         console.log("0")
     }
 
