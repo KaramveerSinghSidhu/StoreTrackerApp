@@ -191,7 +191,7 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         let storeDaily = await getStoreDaily(year, week, day, strDate)
 
 
-        
+        updateSales()
 
         res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek, storeDaily: storeDaily})
     }
@@ -782,6 +782,75 @@ app.get('/logout', (req, res) => {
 
 //functions
 //#region
+async function updateSales(){
+    sales = await DailySales.find({})
+
+    sales.forEach(sale =>{
+        updateSale(sale._id)
+    })
+
+    async function updateSale(id){
+        //await DailySales.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
+        console.log("0")
+    }
+
+    sales1 = await DailyStore.find({})
+
+    sales1.forEach(sale =>{
+        updateSale1(sale._id)
+    })
+
+    async function updateSale1(id){
+        await DailyStore.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
+        console.log("1")
+    }
+
+    sales2 = await WeeklySales.find({})
+
+    sales2.forEach(sale =>{
+        updateSale2(sale._id)
+    })
+
+    async function updateSale2(id){
+        await WeeklySales.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
+        console.log("2")
+    }
+
+    sales3 = await WeeklyStore.find({})
+
+    sales3.forEach(sale =>{
+        updateSale3(sale._id)
+    })
+
+    async function updateSale3(id){
+        await WeeklyStore.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
+        console.log("3")
+    }
+
+    sales4 = await Store.find({})
+
+    sales4.forEach(sale =>{
+        updateSale4(sale._id)
+    })
+
+    async function updateSale4(id){
+        await Store.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
+        console.log("4")
+    }
+
+    sales5 = await User.find({})
+
+    sales5.forEach(sale =>{
+        updateSale5(sale._id)
+    })
+
+    async function updateSale5(id){
+        await User.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
+        console.log("5")
+    }
+
+}
+
 async function getStoreDaily(year, week, day, strDate){
 
 

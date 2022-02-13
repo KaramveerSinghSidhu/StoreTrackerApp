@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema({
         },
         store: {
             type: Number
+        },
+        brand: {
+            type:String
         }
 })
 
