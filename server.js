@@ -1075,7 +1075,7 @@ async function genWeeklySales(year, week){
                     fdpAttach: 0,
                     fdp: 0,
                     weeklyhours: 20,
-                    retired: flase
+                    retired: false
                 })
                 myweek = await myweek.save()
             }
