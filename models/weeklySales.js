@@ -27,7 +27,8 @@ const weeklySalesSchema = new mongoose.Schema({
         bpo:Number,
         store:Number,
         area:Number,
-        brand:String
+        brand:String,
+        retired: Boolean
 
 
 })

@@ -188,7 +188,7 @@ app.get('/5501/home', isAuthUser, async (req, res) => {
         let users = await findOtherUsers(req.user.name)
         let myweek = await findMyWeek(week, year, req.user.name)
         let mystore = await findStoreMonthly(month, year)
-        let storeDaily = await getStoreDaily(year, week, day, strDate)
+        let storeDaily = await getStoreDaily(year, week, day, strDate);
 
 
         res.render('home.ejs', {users: users, username: req.user, date: strDate, mystore: mystore, myweek: myweek, storeDaily: storeDaily})
@@ -1055,6 +1055,7 @@ async function genWeeklySales(year, week){
 
     users.forEach(async user => {
         if(user.name != undefined) {
+            if(user.role != "Retired"){
             let myweek = await WeeklySales.findOne({
                 week: week, 
                 user: user.name,
@@ -1073,9 +1074,11 @@ async function genWeeklySales(year, week){
                     ars: 0,
                     fdpAttach: 0,
                     fdp: 0,
-                    weeklyhours: 20
+                    weeklyhours: 20,
+                    retired: flase
                 })
                 myweek = await myweek.save()
+            }
             }
         }
     })
@@ -1149,7 +1152,10 @@ async function findWeeklySales(week, year){
 
     let thisWeek = await WeeklySales.find({
         week: week, 
-        year: year
+        year: year,
+        retired: {
+            $ne: true
+        }
     }).sort({totalSubs: -1})
 
     return thisWeek
@@ -1786,9 +1792,7 @@ async function updateWeekMngr(a, week, year, thisWeek){
     weekStore.termSubs = thisWeek.termSubs
     weekStore.endOfWeek = thisWeek.endOfWeek
 
-    if(totalSubs == 0 && weeklyhours == 0){
-        weekStore.weeklyAchieved = "Black"
-    }else if(totalSubs >= target){
+    if(totalSubs >= target){
         weekStore.weeklyAchieved = "Yellow"
         if(totalSubs >= strech){
             weekStore.weeklyAchieved = "Green"
