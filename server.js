@@ -35,6 +35,7 @@ const commhup = process.env.COMMHUP
 const commamc = process.env.COMMAMC
 const commfdp = process.env.COMMFDP
 const commacc = process.env.COMMACC
+const commtvm = process.env.COMMTVM
 
 try{
     mongoose.connect(uri, {
@@ -87,8 +88,32 @@ passport.use(new LocalStrategy(function (username, password, done) {
 
 //paths
 //#region
+
+app.get('/profile', isAuthUser, (req, res) => {
+    let user = req.user
+    res.render('updateaccount.ejs', {user: user})
+})
+
 app.get('/register', isAuthandMgrUser, (req, res) => {
     res.render('register.ejs')
+})
+
+app.post('/update/user', isAuthUser, async (req, res) => {
+    let isUser = bcrypt.compare(req.body.passwordold, user.password)
+    if(isUser){
+    const SafePass = await bcrypt.hash(req.body.passwordnew, 10)
+
+    user = await User.findOneAndDelete({username: req.body.username})
+    if(user != null){
+        let newuser = await User.findByIdAndUpdate({_id: user._id}, {password: SafePass})
+        await newuser.save()
+    }
+    try{
+        res.redirect('/logout')
+    }catch{
+        res.render('/profile')
+    }
+    }   
 })
 
 app.post('/register', isAuthandMgrUser, async (req, res) => {
@@ -206,7 +231,8 @@ app.get('/sales', isAuthUser, async (req, res) => {
 
     let mysales = await findMySales(week, year, req.user.name)
     let users = await findOtherUsers(req.user.name)
-    let myweek = await findMyWeek(week, year, req.user.name)
+    //let myweek = await findMyWeek(week, year, req.user.name)
+    let myweek = await WeeklySalesGen(year, week, req.user.username, req.user.name)
     if(mysales == null && myweek != null){
         await WeeklySales.findByIdAndDelete(myweek._id)
     }
@@ -366,7 +392,7 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
     
     
 
-    if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mcApp > 0 || a.acc > 0 || a.bpo > 0 || a.express > 0){
+    if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mcApp > 0 || a.acc > 0 || a.bpo > 0 || a.express > 0 || a.tvm > 0){
         mysales = await DailySales.findOne({
             date: a.saleDate, 
             user: req.body.rep
@@ -406,6 +432,7 @@ app.post('/add/sale', isAuthUser, async (req, res) => {
                 mbb : 0,
                 termMbb : 0,
                 hup : 0,
+                tvm: 0,
                 express:0,
                 fdp : 0,
                 acc : 0,
@@ -463,7 +490,7 @@ app.post('/return/sale', isAuthUser, async (req, res) => {
     var week = dateOfDay.setZone('America/Denver').plus({day: 1}).weekNumber
     var daystr = dateOfDay.weekdayLong
 
-    if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mc > 0 || a.acc > 0 || a.bpo > 0 || a.express > 0){
+    if(a.byodnac > 0 || a.byodmbb > 0 || a.termnac > 0 || a.termmbb > 0 || a.hup > 0 || a.fdp > 0 || a.mc > 0 || a.acc > 0 || a.bpo > 0 || a.express > 0 || a.tvm > 0){
         
         let mysales = await DailySales.findOne({
             date: a.saleDate, 
@@ -622,11 +649,14 @@ app.get('/weekly/:username/:year/:week', isAuthUser, async (req, res) => {
 
     }).sort({date: -1})  
 
-    let myweek = await WeeklySales.findOne({
-        userID:  req.params.username,
-        week: req.params.week,
-        year: req.params.year
-    })
+    // let myweek = await WeeklySales.findOne({
+    //     userID:  req.params.username,
+    //     week: req.params.week,
+    //     year: req.params.year
+    // })
+
+    
+    let myweek = await WeeklySalesGen(req.params.year, req.params.week, user.username, user.name)
 
     res.render('sales.ejs', {mysales: mysales, username: req.user, myweek: myweek, year: year, weekNow: weekNow, user: user, week: week})
 })
@@ -789,7 +819,6 @@ async function updateSales(){
 
     async function updateSale(id){
         await DailySales.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
-        console.log("0")
     }
 
     sales1 = await DailyStore.find({})
@@ -800,7 +829,6 @@ async function updateSales(){
 
     async function updateSale1(id){
         await DailyStore.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
-        console.log("1")
     }
 
     sales2 = await WeeklySales.find({})
@@ -811,7 +839,6 @@ async function updateSales(){
 
     async function updateSale2(id){
         await WeeklySales.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
-        console.log("2")
     }
 
     sales3 = await WeeklyStore.find({})
@@ -822,7 +849,6 @@ async function updateSales(){
 
     async function updateSale3(id){
         await WeeklyStore.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
-        console.log("3")
     }
 
     sales4 = await Store.find({})
@@ -833,7 +859,6 @@ async function updateSales(){
 
     async function updateSale4(id){
         await Store.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
-        console.log("4")
     }
 
     sales5 = await User.find({})
@@ -844,7 +869,6 @@ async function updateSales(){
 
     async function updateSale5(id){
         await User.findOneAndUpdate({_id:id}, {$set: {area: 35, store:5501, brand:"F"}})
-        console.log("5")
     }
 
 }
@@ -930,6 +954,98 @@ async function getStoreDaily(year, week, day, strDate){
     return newDaily
 }
 
+async function WeeklySalesGen(year, week, username, name){
+    var express = 0, nac = 0, termnac = 0, hup = 0, mbb = 0, termmbb = 0, tvm = 0, tvmAttach = 0, fdp = 0, acc = 0, fdpAttach = 0, commission = 0, mca = 0, mcr = 0, mc = 0
+
+    oldWeek = await WeeklySales.findOne({
+        week: week,
+        year: year,
+        userID: username
+    })
+
+    if(oldWeek != null){
+        var id = oldWeek._id
+        await WeeklySales.findByIdAndDelete({
+            _id: id
+        })
+    }
+
+    sales =  await DailySales.find({
+        week: week,
+        year: year,
+        userID: username
+    })
+
+    sales.forEach(sale =>{
+        if(sale.express == null){var iexpress = 0}else{var iexpress = sale.express}
+        if(sale.nac == null){var inac = 0}else{var inac = sale.nac}
+        if(sale.termNac == null){var itnac = 0}else{var itnac = sale.termNac}
+        if(sale.hup == null){var ihup = 0}else{var ihup = sale.hup}
+        if(sale.mbb == null){var imbb = 0}else{var imbb = sale.mbb}
+        if(sale.termMbb == null){var itmbb = 0}else{var itmbb = sale.termMbb}
+        if(sale.tvm == null){var itvm = 0}else{var itvm = sale.tvm}
+        if(sale.fdp == null){var ifdp = 0}else{var ifdp = sale.fdp}
+        if(sale.acc == null){var iacc = 0}else{var iacc = sale.acc}
+        if(sale.mcApproved == null){var imca = 0}else{var imca = sale.mcApproved}
+        if(sale.mcReview == null){var imcr = 0}else{var imcr = sale.mcReview}
+        if(sale.userCommission == null){var icommission = 0}else{var icommission = sale.userCommission}
+
+
+        express += iexpress
+        nac += inac
+        termnac += itnac
+        hup += ihup
+        mbb += imbb
+        termmbb += itmbb
+        tvm += itvm
+        fdp += ifdp
+        acc += iacc
+        commission += icommission
+        mca += imca
+        mcr += imcr
+    })
+
+    var termSubs = (termnac + termmbb + hup)
+    fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
+    tvmAttach = ((tvm/hup).toFixed(2) * 100)
+
+    mc = mcr + mca
+
+    if(isNaN(fdpAttach)){
+        fdpAttach = 0
+    }
+    if(isNaN(tvmAttach)){
+        tvmAttach = 0
+    }
+
+    let newWeekly = new WeeklySales({
+        week: week,
+        year: year,
+        userID: username,
+        user: name,
+        express: express,
+        nac: nac,
+        termNac: termnac,
+        hup: hup,
+        mbb: mbb,
+        termMbb: termmbb,
+        tvm: tvm,
+        fdp: fdp,
+        acc: acc,
+        mc: mc,
+        mca: mca,
+        mcr: mcr,
+        userCommission: commission,
+        fdpAttach: fdpAttach,
+        tvmAttach: tvmAttach,
+        termSubs: termSubs
+    })
+
+
+    await newWeekly.save()
+    return newWeekly
+}
+
 async function getStoreWeekly(week, year){
 
     let dt = DateTime.fromObject({
@@ -945,10 +1061,8 @@ async function getStoreWeekly(week, year){
     var dateOfDay = DateTime.now(year, month, day).setZone('America/Denver')
     var daystr = dateOfDay.monthShort + " " + day
 
-    var totalSubs=0
-    var acc=0
-    var termSubs=0
-    var fdp = 0
+    var express = 0, nac = 0, termnac = 0, hup = 0, mbb = 0, termmbb = 0, tvm = 0, tvmAttach = 0, fdp = 0, acc = 0, fdpAttach = 0, commission = 0, mca = 0, mcr = 0, mc = 0
+
     var target, strech, weeklyhours, weeklyAchieved
     
 
@@ -975,26 +1089,34 @@ async function getStoreWeekly(week, year){
         year: year
     })
     sales.forEach(sale =>{
-        var totalSubsi=0
-        var acci=0
-        var termSubsi=0
-        var fdpi = 0
-        
 
-        
-        if(sale.totalSubs == null){totalSubsi = 0}else{totalSubsi = sale.totalSubs}
-        if(sale.termSubs == null){termSubsi = 0}else{termSubsi = sale.termSubs}
-        if(sale.fdp == null){fdpi = 0}else{fdpi = sale.fdp}
-        if(sale.acc == null){acci = 0}else{acci = sale.acc}
+        if(sale.express == null){var iexpress = 0}else{var iexpress = sale.express}
+        if(sale.nac == null){var inac = 0}else{var inac = sale.nac}
+        if(sale.termNac == null){var itnac = 0}else{var itnac = sale.termNac}
+        if(sale.hup == null){var ihup = 0}else{var ihup = sale.hup}
+        if(sale.mbb == null){var imbb = 0}else{var imbb = sale.mbb}
+        if(sale.termMbb == null){var itmbb = 0}else{var itmbb = sale.termMbb}
+        if(sale.tvm == null){var itvm = 0}else{var itvm = sale.tvm}
+        if(sale.fdp == null){var ifdp = 0}else{var ifdp = sale.fdp}
+        if(sale.acc == null){var iacc = 0}else{var iacc = sale.acc}
+        if(sale.mca == null){var imca = 0}else{var imca = sale.mca}
+        if(sale.mcr == null){var imcr = 0}else{var imcr = sale.mcr}
 
-        totalSubs = totalSubs + totalSubsi
-        acc = acc + acci
-        termSubs = termSubs + termSubsi
-        fdp = fdp + fdpi
+        express += iexpress
+        nac += inac
+        termnac += itnac
+        hup += ihup
+        mbb += imbb
+        termmbb += itmbb
+        tvm += itvm
+        fdp += ifdp
+        acc += iacc
+        mca += imca
+        mcr += imcr
 
-        
     })
 
+    var totalSubs = (nac + termnac + hup + mbb + termmbb + mcr + mca)
     if(totalSubs > strech){
         weeklyAchieved = "Green"
     }else if (totalSubs > target){
@@ -1003,32 +1125,45 @@ async function getStoreWeekly(week, year){
         weeklyAchieved = "Red"
     }
 
-    var ars = (acc / totalSubs).toFixed(2)
-    var fdpAttach = ((fdp / termSubs) * 100).toFixed(2)
+    var termSubs = (termnac + termmbb + hup)
+    fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
+    tvmAttach = ((tvm/hup).toFixed(2) * 100)
 
-    if(isNaN(ars)){
-        ars = 0
-    }
+    mc = mcr + mca
+
     if(isNaN(fdpAttach)){
         fdpAttach = 0
     }
+    if(isNaN(tvmAttach)){
+        tvmAttach = 0
+    }
 
     let newWeekly = new WeeklyStore({
-        totalSubs: totalSubs,
-        acc: acc,
-        termSubs: termSubs,
+        week: week,
+        year: year,
+        express: express,
+        nac: nac,
+        termNac: termnac,
+        hup: hup,
+        mbb: mbb,
+        termMbb: termmbb,
+        tvm: tvm,
         fdp: fdp,
-        ars: ars,
+        acc: acc,
+        mc: mc,
+        mca: mca,
+        mcr: mcr,
         fdpAttach: fdpAttach,
+        tvmAttach: tvmAttach,
+        termSubs: termSubs,
         target: target,
         strech: strech,
         weeklyAchieved: weeklyAchieved,
         weeklyhours: weeklyhours,
-        year: year,
-        week: week,
         endOfWeek: daystr
     })
 
+    console.log(newWeekly)
     await newWeekly.save()
 
     return newWeekly
@@ -1117,7 +1252,7 @@ async function findMySales(week, year, user){
         week: week,
         year: year
 
-    }).sort({date: -1})
+    }).sort({date: 1})
 
     return mysales
 }
@@ -1156,7 +1291,7 @@ async function findWeeklySales(week, year){
         retired: {
             $ne: true
         }
-    }).sort({totalSubs: -1})
+    }).sort({userCommission: -1})
 
     return thisWeek
 }
@@ -1340,6 +1475,11 @@ async function addSale(a, user, myweek, store, mysales, weeklyStore, logSale){
     }else{
         var iacc = 0
     }
+    if(!isNaN(parseInt(a.tvm))){
+        var itvm = parseInt(a.tvm)
+    }else{
+        var itvm = 0
+    }
     if(!isNaN(parseInt(a.bpo))){
         var ibpo = parseInt(a.bpo)
     }else{
@@ -1363,7 +1503,7 @@ async function addSale(a, user, myweek, store, mysales, weeklyStore, logSale){
             var imcApproved = 0
         }
     }
-    updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress)
+    updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, itvm, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress)
     
     //userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
 }
@@ -1402,6 +1542,11 @@ async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale)
     }else{
         var ihup = 0
     }
+    if(!isNaN(parseInt(a.tvm))){
+        var itvm = parseInt(a.tvm)
+    }else{
+        var itvm = 0
+    }
     if(!isNaN(parseInt(a.fdp))){
         var ifdp = parseInt(a.fdp)
     }else{
@@ -1423,10 +1568,158 @@ async function returnSale(a, mysales, user, myweek, store, weeklyStore, logSale)
         var imcReview = 0
         var imcApproved = 0
 
-    updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress)
+    updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, itvm, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress)
 
     //userLogSale(a, user, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, ibpo, stringValue, logSale, iexpress)
     
+
+}
+
+async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, itvm, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress){
+
+    //declaring vars
+    var nac, tnac, mbb, tmbb, hup, fdp, acc, bpo, mc, mcApproved, mcReview, mcValue, express, tvm, express
+    var date = a.saleDate
+    var strofDate = date.split('-')
+    var year = parseInt(strofDate[0])
+    var dayy = parseInt(strofDate[2])
+    var month = parseInt(strofDate[1])
+    var dateOfDay = DateTime.utc(year, month, dayy).setZone('America/Denver')
+    var day = dateOfDay.plus({day: 1}).weekdayLong
+    let week = DateTime.utc(year, month, dayy).setZone('America/Denver').plus({day: 2}).weekNumber
+
+    //fetching old post info
+    if(mysales.nac == null){nac = 0}else{nac = mysales.nac}
+    if(mysales.termNac == null){tnac = 0}else{tnac = mysales.termNac}
+    if(mysales.mbb == null){mbb = 0}else{mbb = mysales.mbb}
+    if(mysales.termMbb == null){tmbb = 0}else{tmbb = mysales.termMbb}
+    if(mysales.hup == null){hup = 0}else{hup = mysales.hup}
+    if(mysales.fdp == null){fdp = 0}else{fdp = mysales.fdp}
+    if(mysales.tvm == null){tvm = 0}else{tvm = mysales.tvm}
+    if(mysales.acc == null){acc = 0}else{acc = mysales.acc}
+    if(mysales.bpo == null){bpo = 0}else{bpo = mysales.bpo}
+    if(mysales.mc == null){mc = 0}else{mc = mysales.mc}
+    if(mysales.mcApproved == null){mcApproved = 0}else{mcApproved = mysales.mcApproved}
+    if(mysales.mcReview == null){mcReview = 0}else{mcReview = mysales.mcReview}
+    if(mysales.express == null){express = 0}else{express = mysales.express}
+
+    //adding new input + old input
+    if(stringValue == "add"){
+        nac += inac
+        tnac += itnac
+        mbb += imbb
+        tmbb += itmbb
+        hup += ihup
+        fdp += ifdp
+        acc += iacc
+        mc += imc
+        bpo += ibpo
+        mcApproved += imcApproved
+        mcReview += imcReview
+        mcValue = imcValue
+        express += iexpress
+        tvm += itvm
+    }else if (stringValue == "return"){
+        nac = nac - inac
+        tnac = tnac - itnac
+        mbb = mbb - imbb
+        tmbb = tmbb - itmbb
+        hup = hup - ihup
+        fdp = fdp - ifdp
+        acc = acc - iacc
+        mc = imc
+        bpo = bpo - ibpo
+        mcApproved = imcApproved
+        mcReview = imcReview
+        mcValue = imcValue
+        express = express - iexpress
+        tvm = tvm - itvm
+    }
+
+    if(isNaN(imc)){
+        imc = 0
+    }
+
+//calculating commisson
+var commission = ((nac * commnac) + (tnac * commtnac) + ((mbb + tmbb) * commmbb) + (hup * commhup) + (fdp * commfdp) + (acc * commacc) + (mcApproved * commamc) + (tvm * commtvm)).toFixed(2)
+var icommission = ((inac * commnac) + (itnac * commtnac) + ((imbb + tmbb) * commmbb) + (ihup * commhup) + (ifdp * commfdp) + (iacc * commacc) + (imcApproved * commamc) + (itvm * commtvm)).toFixed(2)
+
+if(stringValue == "add"){
+    hup = hup + itvm
+}else if (stringValue == "return"){
+    hup = hup - itvm
+}
+
+    var itotalSubs = (inac + itnac + imbb + itmbb + ihup + imc + iexpress)
+    var itermSubs = ( itnac + itmbb + ihup)
+    var iars = (iacc / itotalSubs).toFixed(2)
+    var ifdpAttach = ((ifdp / itermSubs).toFixed(2) * 100)
+    var itvmAttach = ((itvm/ihup).toFixed(2) * 100)
+
+    var totalSubs = (nac + tnac + mbb + tmbb + hup + mc + express)
+    var termSubs = (tnac + tmbb + hup)
+    var ars = (acc / totalSubs).toFixed(2)
+    var fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
+    var tvmAttach = ((tvm/hup).toFixed(2) * 100)
+
+    if(isNaN(ars)){
+        ars = 0
+    }
+    if(isNaN(fdpAttach)){
+        fdpAttach = 0
+    }
+    if(isNaN(tvmAttach)){
+        tvmAttach = 0
+    }
+
+    updateMonthly(a, ibpo, store, stringValue)
+    //creating a new mongodb doc adding values to it
+    var dailySales = new DailySales()
+
+    dailySales.date = date
+    dailySales.year = year
+    dailySales.month = month
+    dailySales.week = week
+    dailySales.day = day
+    dailySales.userID = user.username
+    dailySales.user = a.rep
+    dailySales.userCommission = commission
+    dailySales.nac = nac
+    dailySales.termNac = tnac
+    dailySales.mbb = mbb
+    dailySales.termMbb = tmbb
+    dailySales.hup = hup
+    dailySales.tvm = tvm
+    dailySales.fdp = fdp
+    dailySales.acc = acc
+    dailySales.bpo = bpo
+    dailySales.mc = mc
+    dailySales.mcReview = mcReview
+    dailySales.mcApproved = mcApproved
+    dailySales.totalSubs = totalSubs
+    dailySales.termSubs = termSubs
+    dailySales.ars = ars
+    dailySales.fdpAttach = fdpAttach
+    dailySales.tvmAttach = tvmAttach
+    dailySales.express = express
+
+    //saving doc and deleting old one
+    dailySales = await dailySales.save()
+    if(mysales._id != null){
+    await DailySales.findByIdAndDelete(mysales._id)
+    }
+
+    if(stringValue == "return"){
+        if(commission == 0){
+            if(bpo == 0){
+                if(acc == 0){
+                    await DailySales.findByIdAndDelete(dailySales._id)
+                }
+            }
+        }
+    }
+
+    WeeklySalesGen(year, week, user.username, user.name)
 
 }
 
@@ -1606,139 +1899,6 @@ async function updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs,i
         await WeeklySales.findByIdAndDelete(myweek._id)
     }
     
-}
-
-async function updateDaily(a, user, mysales, inac, itnac, imbb, itmbb, ihup, ifdp, iacc, imc, imcValue, ibpo, imcReview, imcApproved, myweek, stringValue, store, weeklyStore, iexpress){
-
-    //declaring vars
-    var nac, tnac, mbb, tmbb, hup, fdp, acc, bpo, mc, mcApproved, mcReview, mcValue, express
-    var date = a.saleDate
-    var strofDate = date.split('-')
-    var year = parseInt(strofDate[0])
-    var dayy = parseInt(strofDate[2])
-    var month = parseInt(strofDate[1])
-    var dateOfDay = DateTime.utc(year, month, dayy).setZone('America/Denver')
-    var day = dateOfDay.plus({day: 1}).weekdayLong
-    let week = DateTime.utc(year, month, dayy).setZone('America/Denver').plus({day: 2}).weekNumber
-
-    //fetching old post info
-    if(mysales.nac == null){nac = 0}else{nac = mysales.nac}
-    if(mysales.termNac == null){tnac = 0}else{tnac = mysales.termNac}
-    if(mysales.mbb == null){mbb = 0}else{mbb = mysales.mbb}
-    if(mysales.termMbb == null){tmbb = 0}else{tmbb = mysales.termMbb}
-    if(mysales.hup == null){hup = 0}else{hup = mysales.hup}
-    if(mysales.fdp == null){fdp = 0}else{fdp = mysales.fdp}
-    if(mysales.acc == null){acc = 0}else{acc = mysales.acc}
-    if(mysales.bpo == null){bpo = 0}else{bpo = mysales.bpo}
-    if(mysales.mc == null){mc = 0}else{mc = mysales.mc}
-    if(mysales.mcApproved == null){mcApproved = 0}else{mcApproved = mysales.mcApproved}
-    if(mysales.mcReview == null){mcReview = 0}else{mcReview = mysales.mcReview}
-    if(mysales.express == null){express = 0}else{express = mysales.express}
-
-    //adding new input + old input
-    if(stringValue == "add"){
-        nac += inac
-        tnac += itnac
-        mbb += imbb
-        tmbb += itmbb
-        hup += ihup
-        fdp += ifdp
-        acc += iacc
-        mc += imc
-        bpo += ibpo
-        mcApproved += imcApproved
-        mcReview += imcReview
-        mcValue = imcValue
-        express += iexpress
-    }else if (stringValue == "return"){
-        nac = nac - inac
-        tnac = tnac - itnac
-        mbb = mbb - imbb
-        tmbb = tmbb - itmbb
-        hup = hup - ihup
-        fdp = fdp - ifdp
-        acc = acc - iacc
-        mc = imc
-        bpo = bpo - ibpo
-        mcApproved = imcApproved
-        mcReview = imcReview
-        mcValue = imcValue
-        express = express - iexpress
-    }
-
-    if(isNaN(imc)){
-        imc = 0
-    }
-
-
-    var itotalSubs = (inac + itnac + imbb + itmbb + ihup + imc + iexpress)
-    var itermSubs = ( itnac + itmbb + ihup)
-    var iars = (iacc / itotalSubs).toFixed(2)
-    var ifdpAttach = ((ifdp / itermSubs).toFixed(2) * 100)
-
-    var totalSubs = (nac + tnac + mbb + tmbb + hup + mc + express)
-    var termSubs = (tnac + tmbb + hup)
-    var ars = (acc / totalSubs).toFixed(2)
-    var fdpAttach = ((fdp / termSubs).toFixed(2) * 100)
-
-    if(isNaN(ars)){
-        ars = 0
-    }
-    if(isNaN(fdpAttach)){
-        fdpAttach = 0
-    }
-
-    //calculating commisson
-    var commission = ((nac * commnac) + (tnac * commtnac) + ((mbb + tmbb) * commmbb) + (hup * commhup) + (fdp * commfdp) + (acc * commacc)).toFixed(2)
-    var icommission = ((inac * commnac) + (itnac * commtnac) + ((imbb + tmbb) * commmbb) + (ihup * commhup) + (ifdp * commfdp) + (iacc * commacc)).toFixed(2)
-
-    updateWeekly(a, user, myweek, ifdp, iacc, itotalSubs, itermSubs, icommission, stringValue, ibpo, weeklyStore)
-    updateMonthly(a, ibpo, store, stringValue)
-    //creating a new mongodb doc adding values to it
-    var dailySales = new DailySales()
-
-    dailySales.date = date
-    dailySales.year = year
-    dailySales.month = month
-    dailySales.week = week
-    dailySales.day = day
-    dailySales.userID = user.username
-    dailySales.user = a.rep
-    dailySales.userCommission = commission
-    dailySales.nac = nac
-    dailySales.termNac = tnac
-    dailySales.mbb = mbb
-    dailySales.termMbb = tmbb
-    dailySales.hup = hup
-    dailySales.fdp = fdp
-    dailySales.acc = acc
-    dailySales.bpo = bpo
-    dailySales.mc = mc
-    dailySales.mcReview = mcReview
-    dailySales.mcApproved = mcApproved
-    dailySales.totalSubs = totalSubs
-    dailySales.termSubs = termSubs
-    dailySales.ars = ars
-    dailySales.fdpAttach = fdpAttach
-    dailySales.express = express
-
-    //saving doc and deleting old one
-    dailySales = await dailySales.save()
-    if(mysales._id != null){
-    await DailySales.findByIdAndDelete(mysales._id)
-    }
-
-    if(stringValue == "return"){
-        if(commission == 0){
-            if(bpo == 0){
-                if(acc == 0){
-                    await DailySales.findByIdAndDelete(dailySales._id)
-                }
-            }
-        }
-    }
-
-
 }
 
 async function updateMonthly(a, ibpo, store, stringValue){

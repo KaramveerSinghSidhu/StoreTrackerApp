@@ -14,6 +14,20 @@ const weeklySalesSchema = new mongoose.Schema({
         fdpAttach: Number,
         fdp: Number,
 
+        
+        nac:Number,
+        termNac:Number,
+        mbb:Number,
+        termMbb:Number,
+        hup:Number,
+        tvm:Number,
+        express:Number,
+        tvm:Number,
+        tvmAttach:Number,
+        mc:Number,
+        mca:Number,
+        mcr:Number,
+
         week:Number,
         year:Number,
 

@@ -1,12 +1,21 @@
 const mongoose = require('mongoose')
 
 const weeklyStoreSchema = new mongoose.Schema({
-        totalSubs: Number,
-        termSubs: Number,
-        acc: Number,
-        ars: Number,
-        fdpAttach: Number,
+        express: Number,
+        nac: Number,
+        termNac: Number,
+        hup: Number,
+        mbb: Number,
+        termMbb: Number,
+        tvm: Number,
         fdp: Number,
+        acc: Number,
+        mc: Number,
+        mca: Number,
+        mcr: Number,
+        fdpAttach: Number,
+        tvmAttach: Number,
+        termSubs: Number,
 
         week:Number,
         year:Number,

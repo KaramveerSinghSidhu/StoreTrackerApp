@@ -23,7 +23,7 @@
                 <div class="col"></div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <h6 class="col pt-2"><%= username.name%></h6>
+                <h7 class="col pt-2"><%= username.name%></h7>
                 <a class="col btn btn-dark" href="/logout">Sign out</a>
             </div>
         </div>
@@ -60,58 +60,73 @@
         <%}%>
     </div>
     <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary">
-        <h6 class="col">Date</h6>
-        <h6 class="col">Day</h6>
-        <h6 class="col">Total Subs</h6>
-        <h6 class="col">Accessories</h6>
-        <h6 class="col">Term Subs</h6>
-        <h6 class="col">FDP</h6>
-        <h6 class="col">ARS</h6>
-        <h6 class="col">FDP%</h6>
+        <h7 class="col mt-2">Date</h7>
+        <h7 class="col mt-2">Day</h7>
+        <h7 class="col mt-2">Express</h7>
+        <h7 class="col mt-2">Nac</h7>
+        <h7 class="col mt-2">T-Nac</h7>
+        <h7 class="col mt-2">HUP</h7>
+        <h7 class="col mt-2">MBB</h7>
+        <h7 class="col mt-2">T-MBB</h7>
+        <h7 class="col mt-2">TVM%</h7>
+        <h7 class="col mt-2">FDP</h7>
+        <h7 class="col mt-2">ACC</h7>
+        <h7 class="col mt-2">FDP%</h7>
+        <h7 class="col mt-2">MC</h7>
         <% if(username.name == myweek.user) { %>
-        <h6 class="col">Commission</h6>
+        <h7 class="col mt-2">Commission</h7>
         <%} else { %>
-            <h6 class="col">Rep</h6>
+            <h7 class="col mt-2">Rep</h7>
         <%}%>
-        <h6 class="col">Detail</h6>
+        <h7 class="col mt-2">Detail</h7>
     </div>
     <% mysales.forEach(sale => { %>
     <div class="bg-light mt-4">
         <div>
             <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-light">
-                <h6 class="col mt-2"><%= sale.date %></h6>
-                <h6 class="col mt-2"><%= sale.day %></h6>
-                <h6 class="col mt-2"><%= sale.totalSubs %></h6>
-                <h6 class="col mt-2">$<%= sale.acc %></h6>
-                <h6 class="col mt-2"><%= sale.termSubs %></h6>
-                <h6 class="col mt-2"><%= sale.fdp %></h6>
-                <h6 class="col mt-2">$<%= sale.ars %></h6>
-                <h6 class="col mt-2"><%= sale.fdpAttach %>%</h6>
+                <h7 class="col mt-2 ms-0"><%= sale.date %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.day %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.express %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.nac %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.termNac %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.hup %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.mbb %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.termMbb %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.tvmAttach %>%</h7>
+                <h7 class="col mt-2 ms-0"><%= sale.fdp %></h7>
+                <h7 class="col mt-2 ms-0">$<%= sale.acc %></h7>
+                <h7 class="col mt-2 ms-0"><%= sale.fdpAttach %>%</h7>
+                <h7 class="col mt-2 ms-0"><%= sale.mc %></h7>
                 <% if(username.name == sale.user) { %>
-                    <h6 class="col mt-2">$<%= sale.userCommission %></h6>
+                    <h7 class="col mt-2 ms-0">$<%= sale.userCommission %></h7>
                     <%} else { %>
-                        <h6 class="col mt-2"><%= sale.user %></h6>
+                        <h7 class="col mt-2 ms-0"><%= sale.user %></h7>
                     <%}%>
-                <a class="btn-dark mb-2 btn col" href="/sale/<%= sale.id%>">View</a>
+                <a class="btn-dark mb-2 btn col ms-0" href="/sale/<%= sale.id%>">View</a>
             </div>
         </div>
     </div>
     <% }) %>
     <div class="row ps-3 pt-3 pe-3 pb-1 mt-4 mb-4 text-center bg-secondary">
-        <h6 class="col">Total</h6>
-        <h6 class="col"><%= myweek.user %></h6>
-        <h6 class="col"><%= myweek.totalSubs %></h6>
-        <h6 class="col">$<%= myweek.acc %></h6>
-        <h6 class="col"><%= myweek.termSubs %></h6>
-        <h6 class="col"><%= myweek.fdp %></h6>
-        <h6 class="col">$<%= myweek.ars %></h6>
-        <h6 class="col"><%= myweek.fdpAttach %>%</h6>
+        <h7 class="col">Total</h7>
+        <h7 class="col"><%= myweek.user %></h7>
+        <h7 class="col"><%= myweek.express %></h7>
+        <h7 class="col"><%= myweek.nac %></h7>
+        <h7 class="col"><%= myweek.termNac %></h7>
+        <h7 class="col"><%= myweek.hup %></h7>
+        <h7 class="col"><%= myweek.mbb %></h7>
+        <h7 class="col"><%= myweek.termMbb %></h7>
+        <h7 class="col"><%= myweek.tvmAttach %>%</h7>
+        <h7 class="col"><%= myweek.fdp %></h7>
+        <h7 class="col">$<%= myweek.acc %></h7>
+        <h7 class="col"><%= myweek.fdpAttach %>%</h7>
+        <h7 class="col"><%= myweek.mc %></h7>
         <% if(username.name == myweek.user) { %>
-            <h6 class="col">$<%= myweek.userCommission %></h6>
+            <h7 class="col">$<%= myweek.userCommission %></h7>
             <%} else {%>
-                <h6 class="col"><%= myweek.userID %></h6>
+                <h7 class="col"><%= myweek.userID %></h7>
             <%}%>
-        <h6 class="col">Week: <%= myweek.week %></h6>
+        <h7 class="col">Week: <%= myweek.week %></h7>
     </div>
 </div>
 </body>

@@ -23,7 +23,7 @@
                 <div class="col"></div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <h6 class="col pt-2"><%= username.name%></h6>
+                <h7 class="col pt-2"><%= username.name%></h7>
                 <a class="col btn btn-dark" href="/logout">Sign out</a>
             </div>
         </div>
@@ -64,31 +64,41 @@
             <%}%>
     </div>
     <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-secondary">
-        <h6 class="col">Week: <%=week%></h6>
-        <h6 class="col">ID</h6>
-        <h6 class="col">Total Subs</h6>
-        <h6 class="col">Accessories</h6>
-        <h6 class="col">Term Subs</h6>
-        <h6 class="col">FDP</h6>
-        <h6 class="col">ARS</h6>
-        <h6 class="col">FDP%</h6>
-        <h6 class="col">Subs to Target</h6>
-        <h6 class="col">Color</h6>
-        <h6 class="col">Detail</h6>
+        <h7 class="col mt-2">Week: <%=week%></h7>
+        <h7 class="col mt-2">ID</h7>
+        <h7 class="col mt-2">Express</h7>
+        <h7 class="col mt-2">Nac</h7>
+        <h7 class="col mt-2">T-Nac</h7>
+        <h7 class="col mt-2">HUP</h7>
+        <h7 class="col mt-2">MBB</h7>
+        <h7 class="col mt-2">T-MBB</h7>
+        <h7 class="col mt-2">TVM%</h7>
+        <h7 class="col mt-2">FDP</h7>
+        <h7 class="col mt-2">ACC</h7>
+        <h7 class="col mt-2">FDP%</h7>
+        <h7 class="col mt-2">MC</h7>
+        <!--<h7 class="col mt-2">Subs to Target</h7>
+        <h7 class="col mt-2">Color</h7> -->
+        <h7 class="col mt-2">Detail</h7>
     </div>
     <% thisWeek.forEach(sale => { %>
     <div class="bg-light mt-4">
         <div>
             <div class="row ps-3 pt-3 pe-3 pb-1 text-center bg-light">
-                <h6 class="col"><%= sale.user %></h6>
-                <h6 class="col"><%= sale.userID %></h6>
-                <h6 class="col"><%= sale.totalSubs %></h6>
-                <h6 class="col">$<%= sale.acc %></h6>
-                <h6 class="col"><%= sale.termSubs %></h6>
-                <h6 class="col"><%= sale.fdp %></h6>
-                <h6 class="col">$<%= sale.ars %></h6>
-                <h6 class="col"><%= sale.fdpAttach %>%</h6>
-                <h6 class="col">
+                <h7 class="col mt-2"><%= sale.user %></h7>
+                <h7 class="col mt-2"><%= sale.userID %></h7>
+                <h7 class="col mt-2"><%= sale.express %></h7>
+                <h7 class="col mt-2"><%= sale.nac %></h7>
+                <h7 class="col mt-2"><%= sale.termNac %></h7>
+                <h7 class="col mt-2"><%= sale.hup %></h7>
+                <h7 class="col mt-2"><%= sale.mbb %></h7>
+                <h7 class="col mt-2"><%= sale.termMbb %></h7>
+                <h7 class="col mt-2"><%= sale.tvmAttach %>%</h7>
+                <h7 class="col mt-2"><%= sale.fdp %></h7>
+                <h7 class="col mt-2">$<%= sale.acc %></h7>
+                <h7 class="col mt-2"><%= sale.fdpAttach %>%</h7>
+                <h7 class="col mt-2"><%= sale.mc %></h7>
+                <!--<h7 class="col mt-2">
                     <% if(sale.totalSubs > sale.strech) { %>
                             0
                         <% }else if(sale.totalSubs < sale.target){ %>
@@ -96,8 +106,8 @@
                         <% } else if(sale.totalSubs >= sale.target){ %>
                             <%= sale.strech - sale.totalSubs  %>
                         <% } %>
-                </h6>
-                <h6 class="col">
+                </h7>
+                <h7 class="col">
                         <% if(sale.weeklyAchieved == "Black") { %>
                             <a class="btn btn-dark btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% }else if(sale.weeklyAchieved == "Green"){ %>
@@ -107,22 +117,27 @@
                         <% }else{ %>
                             <a class="btn btn-danger btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                         <% } %>
-                </h6>
+                </h7> -->
                 <a class="btn-dark mb-2 btn col" href="/weekly/<%= sale.userID%>/<%= sale.year %>/<%= sale.week %>">View</a>
             </div>
         </div>
     </div>
     <% }) %>
     <div class="row ps-3 pt-3 pe-3 pb-3 mt-4 mb-5 text-center bg-secondary">
-        <h6 class="col mt-2">Week End:</h6>
-        <h6 class="col mt-2"><%= storeWeekly.endOfWeek %></h6>
-        <h6 class="col mt-2"><%= storeWeekly.totalSubs %></h6>
-        <h6 class="col mt-2">$<%= storeWeekly.acc %></h6>
-        <h6 class="col mt-2"><%= storeWeekly.termSubs %></h6>
-        <h6 class="col mt-2"><%= storeWeekly.fdp %></h6>
-        <h6 class="col mt-2">$<%= storeWeekly.ars %></h6>
-        <h6 class="col mt-2"><%= storeWeekly.fdpAttach %>%</h6>
-        <h6 class="col mt-2">
+        <h7 class="col mt-2">Week End:</h7>
+        <h7 class="col mt-2"><%= storeWeekly.endOfWeek %></h7>
+        <h7 class="col mt-2"><%= storeWeekly.express %></h7>
+        <h7 class="col mt-2"><%= storeWeekly.nac %></h7>
+        <h7 class="col mt-2"><%= storeWeekly.termNac %></h7>
+        <h7 class="col mt-2"><%= storeWeekly.hup %></h7>
+        <h7 class="col mt-2"><%= storeWeekly.mbb %></h7>
+        <h7 class="col mt-2"><%= storeWeekly.termMbb %></h7>
+        <h7 class="col mt-2"><%= storeWeekly.tvmAttach %>%</h7>
+        <h7 class="col mt-2"><%= storeWeekly.fdp %></h7>
+        <h7 class="col mt-2">$<%= storeWeekly.acc %></h7>
+        <h7 class="col mt-2"><%= storeWeekly.fdpAttach %>%</h7>
+        <h7 class="col mt-2"><%= storeWeekly.mc %></h7>
+        <!-- <h7 class="col mt-2">
             <% if(storeWeekly.totalSubs > storeWeekly.strech) { %>
                     0
                 <% }else if(storeWeekly.totalSubs < storeWeekly.target){ %>
@@ -130,8 +145,8 @@
                 <% } else if(storeWeekly.totalSubs >= storeWeekly.target){ %>
                     <%= storeWeekly.strech - storeWeekly.totalSubs  %>
                 <% } %>
-        </h6>
-        <h6 class="col">
+        </h7>
+        <h7 class="col">
             <% if(storeWeekly.weeklyAchieved == "Green") { %>
                 <a class="btn btn-success btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                 <% }else if(storeWeekly.weeklyAchieved == "Yellow"){ %>
@@ -139,8 +154,8 @@
                 <% }else{ %>
                 <a class="btn btn-danger btn-lg active rounded-circle pt-3 pb-3 mt-1"></a>
                 <% } %>
-            </h6>
-        <h6 class="col mt-2">Week: <%= storeWeekly.week %></h6>
+            </h7> -->
+        <h7 class="col mt-2">Week: <%= storeWeekly.week %></h7>
     </div>
 </div>
 </body>
