@@ -1252,7 +1252,7 @@ async function findMySales(week, year, user){
         week: week,
         year: year
 
-    }).sort({date: 1})
+    }).sort({date: -1})
 
     return mysales
 }
